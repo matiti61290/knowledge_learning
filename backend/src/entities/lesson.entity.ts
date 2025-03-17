@@ -19,6 +19,7 @@ export class Lesson{
     index_order: number;
 
     @Column({ length: 255 })
+    url_video: string;
 
     @Column({ type: 'text' })
     content: string;

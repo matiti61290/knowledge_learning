@@ -13,7 +13,7 @@ async function seedCategory() {
             { name:"Musique" },
             { name: "Informatique" },
             { name: "Jardinage" },
-            { name: "Cuisine:"}
+            { name: "Cuisine"}
         ]
 
         try{

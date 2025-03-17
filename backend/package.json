@@ -22,7 +22,7 @@
     "migration:generate": "npm run typeorm -- migration:generate",
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
-    "seed": "ts-node src/database/seeds/seederRole.ts && ts-node src/database/seeds/seederUser.ts"
+    "seed": "ts-node src/database/seeds/seederRole.ts && ts-node src/database/seeds/seederUser.ts && ts-node src/database/seeds/seederCategory.ts && ts-node src/database/seeds/seederFormation.ts && ts-node src/database/seeds/seederLesson.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
