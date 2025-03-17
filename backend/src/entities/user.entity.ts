@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { Role } from "./role.entity";
 import { Category } from "./category.entity";
 import { Formation } from "./formation.entity";
@@ -26,6 +26,10 @@ export class User{
 
     @Column({ default: false })
     is_verified: boolean;
+
+    @ManyToMany(()=> Role, (role)=> role.users)
+    @JoinTable()
+    roles: Role[];
 
     // Relations between users
     @ManyToOne(()=> User, (user)=> user.created_users)
