@@ -4,6 +4,8 @@ import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/entities/role.entity';
 import { CreateUserDto } from 'src/dto/create-user.dto';
+import { MailService } from 'src/mail/mail.service';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 
 @Injectable()
@@ -13,7 +15,10 @@ export class UserService {
         private readonly userRepository: Repository<User>,
 
         @InjectRepository(Role)
-        private readonly roleRepository: Repository<Role>
+        private readonly roleRepository: Repository<Role>,
+
+        private jwtService: JwtService,
+        private mailService: MailService
     ){}
     
     async findAll(): Promise<User[]> {
@@ -24,7 +29,7 @@ export class UserService {
         if (createUserDto.password !== createUserDto.confirmPassword){
             throw new BadRequestException('les mots de passe ne correspondent pas')
         }
-        
+
         const existingUser = await this.userRepository.findOne({where :{ mail: createUserDto.mail},
         })
 
@@ -43,7 +48,22 @@ export class UserService {
             roles
         })
 
-        return this.userRepository.save(newUser);
+        await this.userRepository.save(newUser);
+
+        const token = this.jwtService.sign({ id: newUser.id });
+        await this.mailService.sendVerificationMail(newUser.mail, token);
+
+        return newUser
+
     }
 
+    async validateUser(token: string) {
+        const payload = this.jwtService.verify(token);
+        const user = await this.userRepository.findOne({ where: { id: payload.id} })
+
+        if(!user) throw new Error('Utilisateur introuvable')
+
+            user.is_verified = true;
+            await this.userRepository.save(user)
+    }
 }
