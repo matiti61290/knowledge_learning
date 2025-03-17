@@ -1,4 +1,5 @@
-import { ArrayNotEmpty, IsArray, IsEmail, IsInt, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { Match } from "./decorators/match.decorator";
 
 export class CreateUserDto {
 
@@ -15,11 +16,14 @@ export class CreateUserDto {
     mail: string;
 
     @IsNotEmpty()
-    @MinLength(6)
+    @IsString()
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {
+        message: 'Le mot de passe doit contenir au moins 8 caracteres, une majuscule, un chiffre et un caractere special'
+    })
     password: string;
 
-    @IsArray()
-    @ArrayNotEmpty()
-    @IsInt({ each: true })
-    roleIds: number[];
+    @IsNotEmpty()
+    @IsString()
+    @Match('password', {message: "Les mots de passe ne correspondent pas"})
+    confirmPassword: string
 }

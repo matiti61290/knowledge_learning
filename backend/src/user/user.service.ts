@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,7 +20,11 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    async registrationUser(createUserDto: CreateUserDto): Promise<User> {
+    async registrationStudent(createUserDto: CreateUserDto): Promise<User> {
+        if (createUserDto.password !== createUserDto.confirmPassword){
+            throw new BadRequestException('les mots de passe ne correspondent pas')
+        }
+        
         const existingUser = await this.userRepository.findOne({where :{ mail: createUserDto.mail},
         })
 
@@ -28,11 +32,7 @@ export class UserService {
             throw new ConflictException('Cet email est deja utilise.')
         }
 
-        const roles = await this.roleRepository.find({ where: {id: In(createUserDto.roleIds)}})
-
-        if (roles.length !== createUserDto.roleIds.length) {
-            throw new NotFoundException('Un ou plusieurs des roles sont introuvable')
-        }
+        const roles = await this.roleRepository.find({ where: {name: 'student'}})
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(createUserDto.password, salt)
