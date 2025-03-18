@@ -1,0 +1,69 @@
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { User } from 'src/entities/user.entity';
+import { Role } from 'src/entities/role.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from 'src/dto/create-user.dto';
+import { MailService } from 'src/mail/mail.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt'
+
+@Injectable()
+export class RegisterService {
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        @InjectRepository(Role)
+        private readonly roleRepository: Repository<Role>,
+
+        private jwtService: JwtService,
+        private mailService: MailService
+    ){}
+
+    async registration(createUserDto: CreateUserDto): Promise<User> {
+        // Check if password and confirmPassword are the same
+        if (createUserDto.password !== createUserDto.confirmPassword){
+            throw new BadRequestException('Les mots de passe ne correspondent pas')
+        }
+
+        // Check if user already exists
+        const existingUser = await this.userRepository.findOne({ where: {mail: createUserDto.mail} })
+
+        if (existingUser){
+            throw new ConflictException('Cet email est deja utilise.')
+        }
+
+        const roles = await this.roleRepository.find({ where: { name: 'student'} })
+
+        // Encrypting the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(createUserDto.password, salt)
+
+        // Create the user
+        const newUser = this.userRepository.create({
+            ...createUserDto,
+            password: hashedPassword,
+            roles
+        })
+
+        await this.userRepository.save(newUser);
+
+        // Send verification mail
+        const token = this.jwtService.sign({ id: newUser.id })
+        await this.mailService.sendVerificationMail(newUser.mail, token)
+
+        return newUser
+    }
+
+    async validateUser(token: string){
+        // Validate the user if it exists
+        const payload = this.jwtService.verify(token)
+        const user = await this.userRepository.findOne({ where: { id: payload.id }})
+
+        if(!user) throw new Error('Utilisateur introuvable')
+
+            user.is_verified = true;
+            await this.userRepository.save(user)
+    }
+}
