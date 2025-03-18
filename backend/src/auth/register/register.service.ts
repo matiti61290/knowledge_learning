@@ -1,10 +1,10 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
-import { User } from 'src/entities/user.entity';
-import { Role } from 'src/entities/role.entity';
+import { User } from '../../entities/user.entity';
+import { Role } from '../../entities/role.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from 'src/dto/create-user.dto';
-import { MailService } from 'src/mail/mail.service';
+import { CreateUserDto } from '../../dto/create-user.dto';
+import { MailService } from '../../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 
@@ -56,14 +56,14 @@ export class RegisterService {
         return newUser
     }
 
+    // Validate the user if it exists
     async validateUser(token: string){
-        // Validate the user if it exists
         const payload = this.jwtService.verify(token)
         const user = await this.userRepository.findOne({ where: { id: payload.id }})
 
         if(!user) throw new Error('Utilisateur introuvable')
 
-            user.is_verified = true;
-            await this.userRepository.save(user)
+        user.is_verified = true;
+        await this.userRepository.save(user)
     }
 }
