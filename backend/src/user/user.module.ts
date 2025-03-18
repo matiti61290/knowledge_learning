@@ -5,12 +5,12 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Role } from 'src/entities/role.entity';
 import { MailService } from 'src/mail/mail.service';
-import {JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, Role]),
         JwtModule.register({
-            secret: "superkey"
+            secret: process.env.JWT_SECRET_KEY
         })],
     controllers: [UserController],
     providers: [UserService, MailService],
