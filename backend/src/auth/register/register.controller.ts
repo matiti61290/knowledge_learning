@@ -19,6 +19,7 @@ export class RegisterController {
     // Validation account
     @Get('validation')
     async validateAccount(@Query('token') token: string) {
-        return this.registerService.validateUser(token)
+        await this.registerService.validateUser(token)
+        return { message: 'User validated' }
     }
 }

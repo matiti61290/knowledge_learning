@@ -56,14 +56,14 @@ export class RegisterService {
         return newUser
     }
 
+    // Validate the user if it exists
     async validateUser(token: string){
-        // Validate the user if it exists
         const payload = this.jwtService.verify(token)
         const user = await this.userRepository.findOne({ where: { id: payload.id }})
 
         if(!user) throw new Error('Utilisateur introuvable')
 
-            user.is_verified = true;
-            await this.userRepository.save(user)
+        user.is_verified = true;
+        await this.userRepository.save(user)
     }
 }

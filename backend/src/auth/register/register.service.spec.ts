@@ -9,6 +9,7 @@ import { RegisterService } from './register.service';
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { verify } from 'crypto';
 
 describe('RegisterService', () => {
     let registerService: RegisterService;
@@ -17,6 +18,7 @@ describe('RegisterService', () => {
     let userRepository: Repository<User>;
     let roleRepository: Repository<Role>;
 
+    // Setup the module for tests
     beforeEach(async () => {
         const mockUserRepository = {
             findOne: jest.fn(),
@@ -43,6 +45,7 @@ describe('RegisterService', () => {
                     provide: JwtService,
                     useValue: {
                         sign: jest.fn().mockReturnValue('mocked-jwt-token'),
+                        verify: jest.fn()
                     },
                 },
                 {
@@ -132,4 +135,37 @@ describe('RegisterService', () => {
             expect(result).toEqual(expect.objectContaining({ id: 1, mail: createUserDto.mail }));
         });
     });
+
+    describe('test for the mail verification', () => {
+        it('should throw an error if user does not exist', async() => {
+            const mockToken = 'mocked-token';
+
+            jest.spyOn(jwtService, 'verify').mockReturnValue({ id: 99 })
+
+            jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null);
+
+            await expect(registerService.validateUser(mockToken)).rejects.toThrow('Utilisateur introuvable')
+        })
+
+        it('Should change is_verified value in true', async() => {
+            const mockToken = 'mocked-token'
+            const mockUser: Partial<User> = {
+                id: 1,
+                firstname: "John",
+                lastname: "Doe",
+                mail: "johnDoe@test.com",
+                password: "P@ssword123",
+                is_verified: false
+            }
+
+            jest.spyOn(jwtService, 'verify').mockReturnValue({ id: mockUser.id })
+            jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(mockUser as User)
+            jest.spyOn(userRepository, 'save').mockResolvedValueOnce(mockUser as User)
+
+            await registerService.validateUser(mockToken)
+            
+            expect(mockUser.is_verified).toBe(true);
+            expect(userRepository.save).toHaveBeenCalledWith(mockUser)
+        })
+    })
 });

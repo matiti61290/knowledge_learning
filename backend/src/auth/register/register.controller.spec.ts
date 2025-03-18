@@ -8,13 +8,15 @@ describe('RegisterController', () => {
     let registerController: RegisterController
     let registerService: RegisterService
 
+    // Setup the module for tests
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [RegisterController],
             providers: [{
                 provide: RegisterService,
                 useValue: {
-                    registration: jest.fn() // On s'assure que `registration` existe
+                    registration: jest.fn(),
+                    validateUser: jest.fn()
                 }
             }]
         }).compile()
@@ -24,6 +26,7 @@ describe('RegisterController', () => {
     })
 
     describe('test the registration controller', () => {
+        // Test the register route
         it('should call the service and return the result', async () => {
             const createUserDto = new CreateUserDto();
             Object.assign(createUserDto, {
@@ -44,15 +47,25 @@ describe('RegisterController', () => {
             };
             
 
-            // Mock de la méthode du service
             jest.spyOn(registerService, 'registration').mockResolvedValueOnce(mockResult as User);
 
-            // Appel du contrôleur
             const result = await registerController.registrationUser(createUserDto);
 
-            // Vérifications
+            
             expect(registerService.registration).toHaveBeenCalledWith(createUserDto);
             expect(result).toEqual(mockResult);
         });
     });
+
+    describe('test the verificate controller', () => {
+        // test the validation route
+        it('should validate the user', async() =>{
+            const mockToken = "mocked-token";
+
+            const response = await registerController.validateAccount(mockToken)
+
+            expect(registerService.validateUser).toHaveBeenCalledWith(mockToken)
+            expect(response).toEqual({ message: 'User validated'})
+        })
+    })
 });
