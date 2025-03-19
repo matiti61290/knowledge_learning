@@ -8,6 +8,9 @@ import { MailService } from '../../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 
+/**
+ * Gère la partie logique de l'inscription et de la validation de l'email
+ */
 @Injectable()
 export class RegisterService {
     constructor(
@@ -21,6 +24,11 @@ export class RegisterService {
         private mailService: MailService
     ){}
 
+    /**
+     * Enregistre le nouveau utilisateur en base de donnée apres avoir vérifier les informations
+     * @param createUserDto standardise les informations envoyées par l'utilisateur et les contraints
+     * @returns {Promise<User> newUser} retourne le nouveau utilisateur enregistré en base de donnée
+     */
     async registration(createUserDto: CreateUserDto): Promise<User> {
         // Check if password and confirmPassword are the same
         if (createUserDto.password !== createUserDto.confirmPassword){
@@ -56,7 +64,10 @@ export class RegisterService {
         return newUser
     }
 
-    // Validate the user if it exists
+    /**
+     * Change le statut du compte en "verifié" après que l'utilisateur ait validé son compte
+     * @param token envoyé via le service mail
+     */
     async validateUser(token: string){
         const payload = this.jwtService.verify(token)
         const user = await this.userRepository.findOne({ where: { id: payload.id }})
