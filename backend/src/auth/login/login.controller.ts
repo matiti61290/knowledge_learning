@@ -10,7 +10,6 @@ export class LoginController {
 
     @Post()
     async login(@Body() loginUserDto: LoginUserDto) {
-        await this.loginService.login(loginUserDto)
-        return {message: 'User connected'}
+        return this.loginService.login(loginUserDto)
     }
 }

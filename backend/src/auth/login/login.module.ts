@@ -1,19 +1,26 @@
-import { Module } from '@nestjs/common';
+import { Module} from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
-import { UserModule } from 'src/user/user.module';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
+import { Role } from 'src/entities/role.entity';
+import * as dotenv from 'dotenv'
+import { RolesGuard } from './guards/roles.guard';
+import { APP_GUARD } from '@nestjs/core';
 
+dotenv.config()
 @Module({
-    imports: [TypeOrmModule.forFeature([User]),
+    imports: [TypeOrmModule.forFeature([User, Role]),
         JwtModule.register({
-            secret: process.env.JWT_SECRET_KEY
-        }), UserModule],
+            secret: process.env.JWT_SECRET_KEY,
+            signOptions: {expiresIn: '1h'}
+        })],
     controllers: [LoginController],
-    providers: [LoginService],
+    providers: [LoginService,{
+        provide: APP_GUARD,
+        useClass: RolesGuard
+    }],
     exports: [LoginService, JwtModule]
-
 })
 export class LoginModule {}

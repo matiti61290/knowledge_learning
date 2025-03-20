@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
+import { Role } from 'src/entities/role.entity';
 import { LoginUserDto } from 'src/dto/login-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,24 +16,37 @@ export class LoginService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
 
+        @InjectRepository(Role)
+        private readonly roleRepository: Repository<Role>,
         private jwtService: JwtService
     ){}
 
+    /**
+     * Methode pour connecter un utilisateur
+     * @param loginUserDto 
+     * @returns {token}
+     */
     async login(loginUserDto: LoginUserDto){
-        const user = await this.userRepository.findOne({ where: {mail: loginUserDto.mail} })
-        
+        const user = await this.userRepository.findOne({ where: {mail: loginUserDto.mail}, relations: ['roles'] })
+
+        // Check if user exists
         if(!user){
             throw new UnauthorizedException('Email ou mot de passe incorrect')
         }
 
+        // Check if passwords correspond
         const isPasswordValide = await bcrypt.compare(loginUserDto.password, user.password)
         if(!isPasswordValide){
             throw new UnauthorizedException('Email ou mot de passe incorrect')
         }
 
-        const payload = { sub: user.id, email: user.mail}
+        // generate the token
+        const roles = user.roles.map(role=> role.name)
+        const payload = { id: user.id, email: user.mail, role: roles}
+        console.log(payload)
         return {
-            access_token: this.jwtService.sign(payload)
+            access_token: this.jwtService.sign(payload),
         }
+        
     }
 }

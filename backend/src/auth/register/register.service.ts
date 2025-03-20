@@ -70,7 +70,8 @@ export class RegisterService {
      */
     async validateUser(token: string){
         const payload = this.jwtService.verify(token)
-        const user = await this.userRepository.findOne({ where: { id: payload.id }})
+        const user = await this.userRepository.findOne({ where: { id: payload.id }, }
+        )
 
         if(!user) throw new Error('Utilisateur introuvable')
 
