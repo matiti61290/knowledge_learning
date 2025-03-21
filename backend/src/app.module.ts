@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
 import { RegisterModule } from './auth/register/register.module';
 import { RegisterController } from './auth/register/register.controller';
 import { LoginModule } from './auth/login/login.module';
+import { ForgotPasswordController } from './auth/forgot-password/forgot-password.controller';
+import { ForgotPasswordModule } from './auth/forgot-password/forgot-password.module';
 
 
 @Module({
@@ -19,7 +21,8 @@ import { LoginModule } from './auth/login/login.module';
     }),
     UserModule,
     RegisterModule,
-    LoginModule
+    LoginModule,
+    ForgotPasswordModule
   ],
   controllers: [AppController, UserController, RegisterController],
   providers: [AppService],

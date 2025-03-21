@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../../entities/user.entity';
 import { Role } from '../../entities/role.entity';
-import { MailService } from '../../mail/mail.service';
+import { MailService } from '../../mail/confirmMail/confirmMail.service';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';

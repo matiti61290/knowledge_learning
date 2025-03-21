@@ -4,7 +4,7 @@ import { Role } from '../../entities/role.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../../dto/create-user.dto';
-import { MailService } from '../../mail/mail.service';
+import { ConfirmMailService } from '../../mail/confirmMail/confirmMail.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 
@@ -21,7 +21,7 @@ export class RegisterService {
         private readonly roleRepository: Repository<Role>,
 
         private jwtService: JwtService,
-        private mailService: MailService
+        private confirmMailService: ConfirmMailService
     ){}
 
     /**
@@ -59,7 +59,7 @@ export class RegisterService {
 
         // Send verification mail
         const token = this.jwtService.sign({ id: newUser.id })
-        await this.mailService.sendVerificationMail(newUser.mail, token)
+        await this.confirmMailService.sendVerificationMail(newUser.mail, token)
 
         return newUser
     }
