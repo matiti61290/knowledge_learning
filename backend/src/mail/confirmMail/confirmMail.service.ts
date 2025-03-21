@@ -5,7 +5,7 @@ import * as nodemailer from 'nodemailer'
  * Gère l'envoie du mail de verification du compte
  */
 @Injectable()
-export class MailService {
+export class ConfirmMailService {
     private transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

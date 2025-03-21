@@ -5,7 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RegisterController } from './register.controller';
 import { RegisterService } from './register.service';
-import { MailService } from 'src/mail/mail.service';
+import { ConfirmMailService } from 'src/mail/confirmMail/confirmMail.service';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
@@ -15,7 +15,7 @@ import { UserModule } from 'src/user/user.module';
         }),
         UserModule],
         controllers: [RegisterController],
-        providers: [RegisterService, MailService],
+        providers: [RegisterService, ConfirmMailService],
         exports: [RegisterService, JwtModule]
 })
 export class RegisterModule {}
