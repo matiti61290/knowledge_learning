@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from 'src/entities/user.entity';
-import { Role } from 'src/entities/role.entity';
+import { User } from '../../entities/user.entity';
 import { LoginUserDto } from 'src/dto/login-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,8 +15,6 @@ export class LoginService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
 
-        @InjectRepository(Role)
-        private readonly roleRepository: Repository<Role>,
         private jwtService: JwtService
     ){}
 
@@ -43,7 +40,6 @@ export class LoginService {
         // generate the token
         const roles = user.roles.map(role=> role.name)
         const payload = { id: user.id, email: user.mail, role: roles}
-        console.log(payload)
         return {
             access_token: this.jwtService.sign(payload),
         }

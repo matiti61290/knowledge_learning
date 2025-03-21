@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../../entities/user.entity';
 import { Role } from '../../entities/role.entity';
-import { MailService } from '../../mail/confirmMail/confirmMail.service';
+import { ConfirmMailService } from '../../mail/confirmMail/confirmMail.service';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -9,11 +9,10 @@ import { RegisterService } from './register.service';
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { verify } from 'crypto';
 
 describe('RegisterService', () => {
     let registerService: RegisterService;
-    let mailService: MailService;
+    let confirmMailService: ConfirmMailService;
     let jwtService: JwtService;
     let userRepository: Repository<User>;
     let roleRepository: Repository<Role>;
@@ -49,7 +48,7 @@ describe('RegisterService', () => {
                     },
                 },
                 {
-                    provide: MailService,
+                    provide: ConfirmMailService,
                     useValue: {
                         sendVerificationMail: jest.fn(),
                     },
@@ -61,7 +60,7 @@ describe('RegisterService', () => {
         userRepository = module.get<Repository<User>>(getRepositoryToken(User));
         roleRepository = module.get<Repository<Role>>(getRepositoryToken(Role));
         jwtService = module.get<JwtService>(JwtService);
-        mailService = module.get<MailService>(MailService);
+        confirmMailService = module.get<ConfirmMailService>(ConfirmMailService);
     });
 
     describe('User Registration', () => {
@@ -131,7 +130,7 @@ describe('RegisterService', () => {
             expect(userRepository.create).toHaveBeenCalled();
             expect(userRepository.save).toHaveBeenCalled();
             expect(jwtService.sign).toHaveBeenCalledWith({ id: 1 });
-            expect(mailService.sendVerificationMail).toHaveBeenCalledWith(createUserDto.mail, 'mocked-jwt-token');
+            expect(confirmMailService.sendVerificationMail).toHaveBeenCalledWith(createUserDto.mail, 'mocked-jwt-token');
             expect(result).toEqual(expect.objectContaining({ id: 1, mail: createUserDto.mail }));
         });
     });
