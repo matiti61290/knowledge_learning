@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ChangePasswordMailService } from 'src/mail/changePasswordMail/change-password-mail/change-password-mail.service';
+import { ChangePasswordMailService } from '../../mail/changePasswordMail/change-password-mail/change-password-mail.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
-import { CheckMailDto } from 'src/dto/check-mail.dto';
-import { NewPasswordDto } from 'src/dto/newPassword.dto';
+import { User } from '../../entities/user.entity';
+import { CheckMailDto } from '../../dto/check-mail.dto';
+import { NewPasswordDto } from '../../dto/newPassword.dto';
 import * as brcrypt from 'bcrypt'
 
 @Injectable()
