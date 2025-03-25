@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 
 /**
- * Class pour la connexion au compte utilisateur
+ * Gère la partie logique de la connexion de l'utilisateur
  */
 @Injectable()
 export class LoginService {
@@ -19,9 +19,12 @@ export class LoginService {
     ){}
 
     /**
-     * Methode pour connecter un utilisateur
-     * @param loginUserDto 
-     * @returns {token}
+     * Méthode pour connecter un utilisateur
+     * @param {LoginUserDto} loginUserDto - standardise les informations envoyées par l'utilisateur avec un dto (Data Transfert Object)
+     * @returns {token} - permet de conserver les informations dans le payload et garder l'utilisateur connecté
+     * 
+     * Exceptions:
+     * - **UnauthorizedException** : Si le(s) mail et/ou mot de passe ne correspond(ent) pas
      */
     async login(loginUserDto: LoginUserDto){
         const user = await this.userRepository.findOne({ where: {mail: loginUserDto.mail}, relations: ['roles'] })
@@ -43,6 +46,5 @@ export class LoginService {
         return {
             access_token: this.jwtService.sign(payload),
         }
-        
     }
 }

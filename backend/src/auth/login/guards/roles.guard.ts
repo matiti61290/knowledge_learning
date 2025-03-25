@@ -4,6 +4,14 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { Observable } from "rxjs";
 
+/**
+ * Vérifie si l'utilisateur a accès a une route a partir de son rôle
+ * @param {token} - contient les informations dont le rôle de l'utilisateur. Il est genéré au moment de la connexion dans le fichier login.service
+ * @returns {boolean} - retourne une autorisation (true) ou un refus (false) en fonction du rôle de l'utilisateur
+ * 
+ * Exceptions: 
+ * - **ForbiddenException** : si aucun token n'est fourni, si l'utilisateur n'a pas le rôle requis pour accéder à cette route ou si le token est invalide
+ */
 @Injectable()
 export class RolesGuard implements CanActivate{
     constructor(
@@ -19,7 +27,6 @@ export class RolesGuard implements CanActivate{
 
         const request = context.switchToHttp().getRequest<Request>()
         const authHeader = request.headers.authorization
-        console.log('authHeader: ', authHeader)
 
         if(!authHeader) {
             throw new ForbiddenException('Aucun token fourni')
@@ -29,7 +36,6 @@ export class RolesGuard implements CanActivate{
 
         try{
             const decoded = this.jwtService.verify(token)
-            console.log('decoded token: ', decoded)
             const userRoles = decoded.role
 
             if ( !userRoles || !requiredRoles.some(role => userRoles.includes(role)) ) {

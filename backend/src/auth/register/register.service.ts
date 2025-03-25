@@ -26,9 +26,15 @@ export class RegisterService {
 
     /**
      * Enregistre le nouveau utilisateur en base de donnée apres avoir vérifier les informations
-     * @param createUserDto standardise les informations envoyées par l'utilisateur et les contraints
-     * @returns {Promise<User> newUser} retourne le nouveau utilisateur enregistré en base de donnée
-     */
+     * @function registration
+     * @param {CreateUserDto} createUserDto - standardise les informations envoyées par l'utilisateur avec un dto (Data Transfert Object)
+     * @returns {Promise<User> newUser} - retourne le nouveau utilisateur enregistré en base de donnée
+     * 
+    * Exceptions :
+    * - **BadRequestException** : Si les mots de passe ne correspondent pas.
+    * - **ConflictException** : Si l'email est déjà enregistré.
+    */
+
     async registration(createUserDto: CreateUserDto): Promise<User> {
         // Check if password and confirmPassword are the same
         if (createUserDto.password !== createUserDto.confirmPassword){
@@ -65,8 +71,12 @@ export class RegisterService {
     }
 
     /**
-     * Change le statut du compte en "verifié" après que l'utilisateur ait validé son compte
-     * @param token envoyé via le service mail
+     * 
+     * @param {token} token - récupère les informations de l'utilisateur grâce à celui-ci.
+     * 
+     * Exceptions :
+     *  - **Error** : Si l'utilisateur est introuvable en base de donnée
+     *  
      */
     async validateUser(token: string){
         const payload = this.jwtService.verify(token)

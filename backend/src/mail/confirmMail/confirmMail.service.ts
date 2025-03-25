@@ -15,7 +15,7 @@ export class ConfirmMailService {
     });
 
     /**
-     * Envoie le mail avec la structure défini
+     * Envoie le mail avec le lien pour valider le compte
      * @param mail adresse mail de l'utilisateur
      * @param token token pour vérifier si l'utilisateur est bien inscrit
      */

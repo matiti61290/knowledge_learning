@@ -13,8 +13,8 @@ export class RegisterController {
     ){}
 
     /**
-     * Gère la requete pour l'inscription.
-     * @param createUserDto 
+     * Gère la route pour l'inscription.
+     * @param {CreateUserDto} createUserDto 
      * @returns {Promise<User>}
      * Voir register.service.ts pour la logique.
      */
@@ -25,7 +25,7 @@ export class RegisterController {
     }
 
     /**
-     * Gère la requête pour vérifier le compte
+     * Gère la route pour vérifier le compte
      * @param token 
      * Voir register.service.ts pour la logique.
      */
