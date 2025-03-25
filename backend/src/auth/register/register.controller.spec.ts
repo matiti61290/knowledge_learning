@@ -8,8 +8,9 @@ describe('RegisterController', () => {
     let registerController: RegisterController
     let registerService: RegisterService
 
-    // Setup the module for tests
     beforeEach(async () => {
+
+        //Create the testing module
         const module: TestingModule = await Test.createTestingModule({
             controllers: [RegisterController],
             providers: [{
@@ -25,8 +26,8 @@ describe('RegisterController', () => {
         registerService = module.get<RegisterService>(RegisterService)
     })
 
+    //Tests for each route in the registerController
     describe('test the registration controller', () => {
-        // Test the register route
         it('should call the service and return the result', async () => {
             const createUserDto = new CreateUserDto();
             Object.assign(createUserDto, {
@@ -58,7 +59,6 @@ describe('RegisterController', () => {
     });
 
     describe('test the verificate controller', () => {
-        // test the validation route
         it('should validate the user', async() =>{
             const mockToken = "mocked-token";
 

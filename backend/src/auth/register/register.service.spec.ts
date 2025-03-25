@@ -19,6 +19,8 @@ describe('RegisterService', () => {
     let roleRepository: Repository<Role>;
 
     beforeEach(async () => {
+
+        //Mock repositories used in the RegisterService
         const mockUserRepository = {
             findOne: jest.fn(),
             create: jest.fn(),
@@ -29,6 +31,7 @@ describe('RegisterService', () => {
             find: jest.fn(),
         };
 
+        //Create the tesing module
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 RegisterService,
@@ -63,6 +66,7 @@ describe('RegisterService', () => {
         confirmMailService = module.get<ConfirmMailService>(ConfirmMailService);
     });
 
+    //Tests grouped by method in the RegisterService
     describe('User Registration', () => {
         it('should throw an error if passwords do not match', async () => {
             const createUserDto = new CreateUserDto();
@@ -76,6 +80,7 @@ describe('RegisterService', () => {
 
             await expect(registerService.registration(createUserDto)).rejects.toThrow(BadRequestException);
         });
+
         it('should throw an error if mail already exists', async () => {
             const createUserDto = new CreateUserDto();
             Object.assign(createUserDto, {
@@ -90,6 +95,7 @@ describe('RegisterService', () => {
 
             await expect(registerService.registration(createUserDto)).rejects.toThrow(ConflictException);
         });
+
         it('should register a new user successfully', async () => {
             const createUserDto = new CreateUserDto();
             Object.assign(createUserDto, {
@@ -132,8 +138,8 @@ describe('RegisterService', () => {
             expect(result).toEqual(expect.objectContaining({ id: 1, mail: createUserDto.mail }));
         });
     });
-    describe('test for the mail verification', () => {
 
+    describe('test for the mail verification', () => {
         it('should throw an error if user does not exist', async() => {
             const mockToken = 'mocked-token';
 

@@ -8,6 +8,7 @@ describe('LoginController', () => {
     let loginController: LoginController
 
     beforeEach(async () => {
+        //Create the testing module
         const module: TestingModule = await Test.createTestingModule({
             controllers: [LoginController],
             providers:[{
@@ -22,6 +23,7 @@ describe('LoginController', () => {
         loginController = module.get<LoginController>(LoginController)
     })
 
+    //Test for each route in the LoginController
     describe('test the login controller', ()  => {
          it('sould call the login service and return a result', async () => {
             const loginUserDto = new LoginUserDto()
