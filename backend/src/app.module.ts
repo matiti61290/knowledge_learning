@@ -29,6 +29,6 @@ import { FormationModule } from './formation/formation.module';
     FormationModule
   ],
   controllers: [AppController, UserController, RegisterController, FormationController],
-  providers: [AppService, FormationService],
+  providers: [AppService],
 })
 export class AppModule {}
