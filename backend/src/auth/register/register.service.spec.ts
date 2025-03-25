@@ -10,6 +10,7 @@ import { BadRequestException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
+
 describe('RegisterService', () => {
     let registerService: RegisterService;
     let confirmMailService: ConfirmMailService;
@@ -17,7 +18,6 @@ describe('RegisterService', () => {
     let userRepository: Repository<User>;
     let roleRepository: Repository<Role>;
 
-    // Setup the module for tests
     beforeEach(async () => {
         const mockUserRepository = {
             findOne: jest.fn(),
@@ -76,7 +76,6 @@ describe('RegisterService', () => {
 
             await expect(registerService.registration(createUserDto)).rejects.toThrow(BadRequestException);
         });
-
         it('should throw an error if mail already exists', async () => {
             const createUserDto = new CreateUserDto();
             Object.assign(createUserDto, {
@@ -91,7 +90,6 @@ describe('RegisterService', () => {
 
             await expect(registerService.registration(createUserDto)).rejects.toThrow(ConflictException);
         });
-
         it('should register a new user successfully', async () => {
             const createUserDto = new CreateUserDto();
             Object.assign(createUserDto, {
@@ -134,8 +132,8 @@ describe('RegisterService', () => {
             expect(result).toEqual(expect.objectContaining({ id: 1, mail: createUserDto.mail }));
         });
     });
-
     describe('test for the mail verification', () => {
+
         it('should throw an error if user does not exist', async() => {
             const mockToken = 'mocked-token';
 
