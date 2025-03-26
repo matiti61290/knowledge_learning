@@ -1,11 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { Formation } from 'src/entities/formation.entity';
 import { FormationService } from './formation.service';
+import { Lesson } from 'src/entities/lesson.entity';
 
 /**
  * Gère les routes pour les formations
  */
-@Controller('formation')
+@Controller('formations')
 export class FormationController {
     constructor(
         private readonly formationService: FormationService
@@ -26,12 +27,25 @@ export class FormationController {
      * @returns - Retourne une liste de formations de la catégorie choisie
      */
     @Get('category/:categoryId')
-    async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<Formation[]> {
-        return this.formationService.findByCategory(categoryId)
+    async findFormationByCategory(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<Formation[]> {
+        return this.formationService.findFormationByCategory(categoryId)
     }
 
     @Get('/:formationId')
-    async findById(@Param('formationId', ParseIntPipe) formationId: number): Promise<Formation> {
-        return this.formationService.findById(formationId)
+    async findFormationById(@Param('formationId', ParseIntPipe) formationId: number): Promise<Formation> {
+        return this.formationService.findFormationById(formationId)
+    }
+
+    @Get('/:formationId/lessons')
+    async findLessonsByFormation(@Param('formationId', ParseIntPipe) formationId: number): Promise<Lesson[]> {
+        return this.formationService.findLessonsByFormation(formationId)
+    } 
+
+    @Get('/:formationId/:lessonId')
+    async findLessonById(
+        @Param('formationId', ParseIntPipe) formationId: number,
+        @Param('lessonId', ParseIntPipe) lessonId: number
+    ): Promise<Lesson> {
+        return this.formationService.findLessonById(formationId, lessonId)
     }
 }
