@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../../entities/user.entity';
 import { Role } from '../../entities/role.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { CreateUserDto } from '../../dto/create-user.dto';
 import { ConfirmMailService } from '../../mail/confirmMail/confirmMail.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
+import { NotFoundError } from 'rxjs';
 
 /**
  * Gère la partie logique de l'inscription et de la validation de l'email
@@ -83,7 +84,7 @@ export class RegisterService {
         const user = await this.userRepository.findOne({ where: { id: payload.id }, }
         )
 
-        if(!user) throw new Error('Utilisateur introuvable')
+        if(!user) throw new NotFoundException('Utilisateur introuvable')
 
         user.is_verified = true;
         await this.userRepository.save(user)

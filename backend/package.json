@@ -23,7 +23,7 @@
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
     "seed": "ts-node src/database/seeds/seederRole.ts && ts-node src/database/seeds/seederUser.ts && ts-node src/database/seeds/seederCategory.ts && ts-node src/database/seeds/seederFormation.ts && ts-node src/database/seeds/seederLesson.ts",
-    "doc": "npm run build && npx jsdoc -c jsdoc.json"
+    "doc": "npx typedoc --emit docs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

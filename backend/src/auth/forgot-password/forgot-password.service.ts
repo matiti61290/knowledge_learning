@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordMailService } from '../../mail/changePasswordMail/change-password-mail/change-password-mail.service';
 import { Repository } from 'typeorm';
@@ -31,7 +31,7 @@ export class ForgotPasswordService {
     async sendMailPassword(checkMailDto: CheckMailDto){
         const user = await this.userRepository.findOne({ where: {mail: checkMailDto.mail}})
         if (!user) {
-            throw new BadRequestException("Cet utilisateur n'existe pas")
+            throw new NotFoundException("Cet utilisateur n'existe pas")
         }
 
         const token = this.jwtService.sign({id: user.id })
@@ -51,7 +51,7 @@ export class ForgotPasswordService {
         const payload = this.jwtService.verify(token)
         const user = await this.userRepository.findOne({ where: { id: payload.id}})
         if (!user) {
-            throw new BadRequestException("Cet utilisateur n'existe pas")
+            throw new NotFoundException("Cet utilisateur n'existe pas")
         }
 
         if(newPasswordDto.newPassword !== newPasswordDto.confirmPassword) {

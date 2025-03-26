@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 describe('FormationService', () => {
   let formationService: FormationService;
@@ -14,7 +14,8 @@ describe('FormationService', () => {
   beforeEach(async () => {
 
     const mockFormationRepository = {
-      find: jest.fn()
+      find: jest.fn(),
+      findOne: jest.fn()
     }
 
     const mockCategoryRepository = {
@@ -63,31 +64,50 @@ describe('FormationService', () => {
 
       jest.spyOn(categoryRepository, 'findOne').mockResolvedValueOnce(null)
 
-      await expect(formationService.findByCategory(mockCategoryId)).rejects.toThrow(BadRequestException)
+      await expect(formationService.findByCategory(mockCategoryId)).rejects.toThrow(NotFoundException)
     })
 
     it('should return a list of formation in function of the category', async () => {
       const mockCategoryId = 1
       const mockCategory: Partial<Category> = { id: 1, name: "Musique"}
-      console.log(mockCategoryId)
-      console.log(mockCategory)
 
       const mockFormations: Partial<Formation>[] = [
         {id: 1, name: "Initiation au piano", category: mockCategory as Category},
         {id: 2, name: "Initiation a la guitare", category: mockCategory as Category}
       ]
-      console.log(mockFormations)
 
       jest.spyOn(categoryRepository, 'findOne').mockResolvedValueOnce(mockCategory as Category)
       jest.spyOn(formationRepository, 'find').mockResolvedValueOnce(mockFormations as Formation[])
 
       const result = await formationService.findByCategory(mockCategoryId)
-      console.log(result)
 
       expect(result).toEqual(mockFormations)
       expect(formationRepository.find).toHaveBeenCalledWith({ where: {category: {id: mockCategoryId}},
       relations: ['category']}
       )
+    })
+  })
+
+  describe('find by id', ()=> {
+    it('should throw an error if the doesn\'t exist', async () => {
+      const mockFormationId = 1
+
+      jest.spyOn(formationRepository, 'findOne').mockResolvedValueOnce(null)
+
+      await expect(formationService.findById(mockFormationId)).rejects.toThrow(NotFoundException)
+    })
+
+    it('should return a formation',async () => {
+      const mockFormationId = 1
+      const mockFormation: Partial<Formation> = {id: 1, name: 'Initiation au piano'}
+
+      jest.spyOn(formationRepository, 'findOne').mockResolvedValueOnce(mockFormation as Formation)
+
+      const result = await formationService.findById(mockFormationId)
+
+      expect(formationRepository.findOne).toHaveBeenCalledWith({ where: {id: mockFormationId}})
+      expect(formationRepository.findOne).toHaveBeenCalledTimes(1)
+      expect(result).toEqual(mockFormation)
     })
   })
 });
