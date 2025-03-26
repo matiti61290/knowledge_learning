@@ -69,20 +69,16 @@ describe('FormationService', () => {
     it('should return a list of formation in function of the category', async () => {
       const mockCategoryId = 1
       const mockCategory: Partial<Category> = { id: 1, name: "Musique"}
-      console.log(mockCategoryId)
-      console.log(mockCategory)
 
       const mockFormations: Partial<Formation>[] = [
         {id: 1, name: "Initiation au piano", category: mockCategory as Category},
         {id: 2, name: "Initiation a la guitare", category: mockCategory as Category}
       ]
-      console.log(mockFormations)
 
       jest.spyOn(categoryRepository, 'findOne').mockResolvedValueOnce(mockCategory as Category)
       jest.spyOn(formationRepository, 'find').mockResolvedValueOnce(mockFormations as Formation[])
 
       const result = await formationService.findByCategory(mockCategoryId)
-      console.log(result)
 
       expect(result).toEqual(mockFormations)
       expect(formationRepository.find).toHaveBeenCalledWith({ where: {category: {id: mockCategoryId}},

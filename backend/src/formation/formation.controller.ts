@@ -16,8 +16,8 @@ export class FormationController {
     }
 
     //Route to get formation by categories
-    @Post('category/:categoryId')
-    async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
+    @Get('category/:categoryId')
+    async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<Formation[]> {
         return this.formationService.findByCategory(categoryId)
     }
 }

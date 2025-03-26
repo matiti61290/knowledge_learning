@@ -15,7 +15,6 @@ export class RegisterController {
     /**
      * Gère la route pour l'inscription.
      * @param {CreateUserDto} createUserDto 
-     * @returns {Promise<User>}
      * Voir register.service.ts pour la logique.
      */
     @Post()
