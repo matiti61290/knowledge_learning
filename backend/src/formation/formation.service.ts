@@ -3,6 +3,7 @@ import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Lesson } from 'src/entities/lesson.entity';
 
 /**
  * Gère la partie logique des formations
@@ -14,7 +15,10 @@ export class FormationService {
         private readonly formationRepository: Repository<Formation>,
 
         @InjectRepository(Category)
-        private readonly categoryRepository: Repository<Category>
+        private readonly categoryRepository: Repository<Category>,
+
+        @InjectRepository(Lesson)
+        private readonly lessonRepository: Repository<Lesson>
     ) {}
 
     /**
@@ -33,7 +37,7 @@ export class FormationService {
      * Exception:
      * - **NotFoundException** - Retourne cette exception si la catégorie n'existe pas
      */
-    async findByCategory(categoryId: number): Promise<Formation[]> {
+    async findFormationByCategory(categoryId: number): Promise<Formation[]> {
         const existingCategory = await this.categoryRepository.findOne({ where: {id: categoryId}})
         
         if(!existingCategory) {
@@ -46,12 +50,48 @@ export class FormationService {
         })
     }
 
-    async findById(formationId: number): Promise<Formation> {
-        const findedFormation = await this.formationRepository.findOne({ where: { id: formationId}})
+    async findFormationById(formationId: number): Promise<Formation> {
+        const existingFormation = await this.formationRepository.findOne({ where: { id: formationId}})
 
-        if(!findedFormation) {
+        if(!existingFormation) {
             throw new NotFoundException('Cette formation n\'existe pas')
         }
-        return findedFormation
+        return existingFormation
+    }
+
+    async findLessonsByFormation(formationId: number): Promise<Lesson[]> {
+        const existingFormation = await this.formationRepository.findOne({ where: {id: formationId}})
+
+        if(!existingFormation) {
+            throw new NotFoundException('Cette formation n\'existe pas')
+        }
+
+        return this.lessonRepository.find({
+            where: {formation: {id: formationId}},
+            relations:['formation']
+        })
+    }
+
+    async findLessonById(formationId: number, lessonId: number): Promise<Lesson> {
+        const existingFormation = await this.formationRepository.findOne({where: {id:formationId}})
+
+        if(!existingFormation) {
+            throw new NotFoundException('Cette formation n\'existe pas')
+        }
+
+        const existingLesson = await this.lessonRepository.findOne({where: {id: lessonId}})
+        
+        if(!existingLesson) {
+            throw new NotFoundException('Cette lecon n\'existe pas')
+        }
+
+        const lesson = await this.lessonRepository.findOne({ where:{id: lessonId, formation: {id: formationId}},
+        relations:['formation']})
+
+        if(!lesson) {
+            throw new NotFoundException('Cette lecon n\'existe pas pour cette formation')
+        }
+
+        return lesson
     }
 }
