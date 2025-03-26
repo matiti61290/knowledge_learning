@@ -33,7 +33,7 @@ export class FormationService {
      * Exception:
      * - **BadRequestException** - Retourne cette exception si la catégorie n'existe pas
      */
-    async findByCategory(categoryId: number): Promise<Formation[]> {3
+    async findByCategory(categoryId: number): Promise<Formation[]> {
         const existingCategory = await this.categoryRepository.findOne({ where: {id: categoryId}})
         
         if(!existingCategory) {
@@ -44,5 +44,14 @@ export class FormationService {
             where: {category: { id: categoryId}},
             relations: ['category']
         })
+    }
+
+    async findById(formationId: number): Promise<Formation> {
+        const findedFormation = await this.formationRepository.findOne({ where: { id: formationId}})
+
+        if(!findedFormation) {
+            throw new BadRequestException('Cette formation n\'existe pas')
+        }
+        return findedFormation
     }
 }

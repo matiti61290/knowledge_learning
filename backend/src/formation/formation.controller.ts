@@ -29,4 +29,9 @@ export class FormationController {
     async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<Formation[]> {
         return this.formationService.findByCategory(categoryId)
     }
+
+    @Get('/:formationId')
+    async findById(@Param('formationId', ParseIntPipe) formationId: number): Promise<Formation> {
+        return this.formationService.findById(formationId)
+    }
 }
