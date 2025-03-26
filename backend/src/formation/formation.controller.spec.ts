@@ -61,5 +61,4 @@ describe('FormationController', () => {
       expect(result).toEqual(mockFormations)
     })
   })
-
 });

@@ -4,6 +4,9 @@ import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
+/**
+ * Gère la partie logique des formations
+ */
 @Injectable()
 export class FormationService {
     constructor(
@@ -14,12 +17,22 @@ export class FormationService {
         private readonly categoryRepository: Repository<Category>
     ) {}
 
-    // Get all formation
+    /**
+     * Méthode pour récupérer toutes les formations disponibles
+     * @returns - Retourne la liste de toute les formations
+     */
     async findAll(): Promise<Formation[]> {
         return this.formationRepository.find()
     }
 
-    //Get formation by category
+    /**
+     * Méthode pour récupérer toutes les formations selon la categorie choisie
+     * @param categoryId - Id de la catégorie pour retourner les formations liées à celle-ci
+     * @returns - Retourne une liste de formations pour la categorie choisie
+     * 
+     * Exception:
+     * - **BadRequestException** - Retourne cette exception si la catégorie n'existe pas
+     */
     async findByCategory(categoryId: number): Promise<Formation[]> {3
         const existingCategory = await this.categoryRepository.findOne({ where: {id: categoryId}})
         
