@@ -5,8 +5,6 @@ import { LoginUserDto } from '../../dto/login-user.dto'
 import { JwtService } from '@nestjs/jwt'
 import { Repository  } from 'typeorm'
 import * as bcrypt from 'bcrypt'
-import { APP_GUARD } from '@nestjs/core'
-import { RolesGuard } from './guards/roles.guard'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Role } from '../../entities/role.entity'
 
@@ -16,6 +14,7 @@ describe('LoginService', ()=> {
     let userRepository: Repository<User>
     let roleRepository: Repository<Role>
 
+    //Mock repositories used in the LoginService
     beforeEach(async ()=> {
         const mockUserRepository = {
             findOne: jest.fn()
@@ -25,6 +24,7 @@ describe('LoginService', ()=> {
             find: jest.fn()
         }
 
+        //Create the testing module
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 LoginService,
@@ -51,6 +51,7 @@ describe('LoginService', ()=> {
         jwtService = module.get<JwtService>(JwtService)
     })
 
+    //Tests each step of the login
     it('Should return an error if user doesn\' exist', async () => {
         const loginUserDto = new LoginUserDto()
         Object.assign(loginUserDto, {

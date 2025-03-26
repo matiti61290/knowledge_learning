@@ -11,6 +11,9 @@ import { RegisterController } from './auth/register/register.controller';
 import { LoginModule } from './auth/login/login.module';
 import { ForgotPasswordController } from './auth/forgot-password/forgot-password.controller';
 import { ForgotPasswordModule } from './auth/forgot-password/forgot-password.module';
+import { FormationController } from './formation/formation.controller';
+import { FormationService } from './formation/formation.service';
+import { FormationModule } from './formation/formation.module';
 
 
 @Module({
@@ -22,9 +25,10 @@ import { ForgotPasswordModule } from './auth/forgot-password/forgot-password.mod
     UserModule,
     RegisterModule,
     LoginModule,
-    ForgotPasswordModule
+    ForgotPasswordModule,
+    FormationModule
   ],
-  controllers: [AppController, UserController, RegisterController],
+  controllers: [AppController, UserController, RegisterController, FormationController],
   providers: [AppService],
 })
 export class AppModule {}
