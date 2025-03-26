@@ -16,7 +16,8 @@ describe('FormationController', () => {
         provide: FormationService,
         useValue: {
           findAll: jest.fn(),
-          findByCategory: jest.fn()
+          findByCategory: jest.fn(),
+          findById: jest.fn()
         }
       }]
     }).compile()
@@ -54,11 +55,24 @@ describe('FormationController', () => {
       const mockCategoryId = 1 
       jest.spyOn(formationService, 'findByCategory').mockResolvedValueOnce(mockFormations as Formation[])
       const result = await formationController.findByCategory(mockCategoryId)
-      console.log(result)
 
       expect(formationService.findByCategory).toHaveBeenCalledTimes(1)
       expect(formationService.findByCategory).toHaveBeenCalledWith(mockCategoryId)
       expect(result).toEqual(mockFormations)
+    })
+
+    it('should return one formation based on an id', async () => {
+      const mockFormationId = 1
+      const mockFormation: Partial<Formation> = { id: 1, name: 'Initiation au piano'}
+
+      jest.spyOn(formationService, 'findById').mockResolvedValueOnce(mockFormation as Formation)
+
+      const result = await formationController.findById(mockFormationId)
+
+      expect(formationService.findById).toHaveBeenCalledTimes(1)
+      expect(formationService.findById).toHaveBeenCalledWith(mockFormationId)
+      expect(result).toEqual(mockFormation)
+
     })
   })
 });

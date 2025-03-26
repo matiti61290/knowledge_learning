@@ -8,7 +8,7 @@ import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { ChangePasswordMailService } from '../../mail/changePasswordMail/change-password-mail/change-password-mail.service'
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, NotFoundException } from '@nestjs/common'
 
 describe('ForgotPasswordService', () => {
     let forgotPasswordService: ForgotPasswordService
@@ -63,7 +63,7 @@ describe('ForgotPasswordService', () => {
             })
     
             jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null)
-            await expect(forgotPasswordService.sendMailPassword(checkMailDto)).rejects.toThrow('Cet utilisateur n\'existe pas')
+            await expect(forgotPasswordService.sendMailPassword(checkMailDto)).rejects.toThrow(NotFoundException)
         })
     
         it('should generate a token and send a mail', async () => {
@@ -101,7 +101,7 @@ describe('ForgotPasswordService', () => {
             jest.spyOn(jwtService, 'verify').mockReturnValueOnce({ id:99 })
             jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null)
     
-            await expect(forgotPasswordService.changePassword(mockToken, newPasswordDto)).rejects.toThrow(new Error('Cet utilisateur n\'existe pas'));
+            await expect(forgotPasswordService.changePassword(mockToken, newPasswordDto)).rejects.toThrow(NotFoundException);
             
         })
     

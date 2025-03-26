@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
@@ -31,13 +31,13 @@ export class FormationService {
      * @returns - Retourne une liste de formations pour la categorie choisie
      * 
      * Exception:
-     * - **BadRequestException** - Retourne cette exception si la catégorie n'existe pas
+     * - **NotFoundException** - Retourne cette exception si la catégorie n'existe pas
      */
     async findByCategory(categoryId: number): Promise<Formation[]> {
         const existingCategory = await this.categoryRepository.findOne({ where: {id: categoryId}})
         
         if(!existingCategory) {
-            throw new BadRequestException('Cette categorie n\'existe pas')
+            throw new NotFoundException('Cette categorie n\'existe pas')
         }
 
         return this.formationRepository.find({
@@ -50,7 +50,7 @@ export class FormationService {
         const findedFormation = await this.formationRepository.findOne({ where: { id: formationId}})
 
         if(!findedFormation) {
-            throw new BadRequestException('Cette formation n\'existe pas')
+            throw new NotFoundException('Cette formation n\'existe pas')
         }
         return findedFormation
     }

@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { RegisterService } from './register.service';
-import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -147,7 +147,7 @@ describe('RegisterService', () => {
 
             jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null);
 
-            await expect(registerService.validateUser(mockToken)).rejects.toThrow('Utilisateur introuvable')
+            await expect(registerService.validateUser(mockToken)).rejects.toThrow(NotFoundException)
         })
 
         it('Should change is_verified value in true', async() => {
