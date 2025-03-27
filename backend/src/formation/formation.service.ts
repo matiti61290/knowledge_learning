@@ -3,7 +3,7 @@ import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Lesson } from 'src/entities/lesson.entity';
+import { Lesson } from '../entities/lesson.entity';
 
 /**
  * Gère la partie logique des formations

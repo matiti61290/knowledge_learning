@@ -16,8 +16,8 @@ describe('FormationController', () => {
         provide: FormationService,
         useValue: {
           findAll: jest.fn(),
-          findByCategory: jest.fn(),
-          findById: jest.fn()
+          findFormationByCategory: jest.fn(),
+          findFormationById: jest.fn()
         }
       }]
     }).compile()
@@ -53,11 +53,11 @@ describe('FormationController', () => {
       ]
 
       const mockCategoryId = 1 
-      jest.spyOn(formationService, 'findByCategory').mockResolvedValueOnce(mockFormations as Formation[])
-      const result = await formationController.findByCategory(mockCategoryId)
+      jest.spyOn(formationService, 'findFormationByCategory').mockResolvedValueOnce(mockFormations as Formation[])
+      const result = await formationController.findFormationByCategory(mockCategoryId)
 
-      expect(formationService.findByCategory).toHaveBeenCalledTimes(1)
-      expect(formationService.findByCategory).toHaveBeenCalledWith(mockCategoryId)
+      expect(formationService.findFormationByCategory).toHaveBeenCalledTimes(1)
+      expect(formationService.findFormationByCategory).toHaveBeenCalledWith(mockCategoryId)
       expect(result).toEqual(mockFormations)
     })
 
@@ -65,12 +65,12 @@ describe('FormationController', () => {
       const mockFormationId = 1
       const mockFormation: Partial<Formation> = { id: 1, name: 'Initiation au piano'}
 
-      jest.spyOn(formationService, 'findById').mockResolvedValueOnce(mockFormation as Formation)
+      jest.spyOn(formationService, 'findFormationById').mockResolvedValueOnce(mockFormation as Formation)
 
-      const result = await formationController.findById(mockFormationId)
+      const result = await formationController.findFormationById(mockFormationId)
 
-      expect(formationService.findById).toHaveBeenCalledTimes(1)
-      expect(formationService.findById).toHaveBeenCalledWith(mockFormationId)
+      expect(formationService.findFormationById).toHaveBeenCalledTimes(1)
+      expect(formationService.findFormationById).toHaveBeenCalledWith(mockFormationId)
       expect(result).toEqual(mockFormation)
 
     })
