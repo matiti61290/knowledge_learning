@@ -3,7 +3,7 @@ import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Lesson } from 'src/entities/lesson.entity';
+import { Lesson } from '../entities/lesson.entity';
 
 /**
  * Gère la partie logique des formations
@@ -50,6 +50,11 @@ export class FormationService {
         })
     }
 
+    /**
+     * Méthode pour récupérer une formation à l'aide de son id
+     * @param formationId - id de la formation souhaitée
+     * @returns - Retourne la formation correspondant à l'id en paramètre
+     */
     async findFormationById(formationId: number): Promise<Formation> {
         const existingFormation = await this.formationRepository.findOne({ where: { id: formationId}})
 
@@ -59,6 +64,11 @@ export class FormationService {
         return existingFormation
     }
 
+    /**
+     * Méthode pour récupérer les leçons d'une formation
+     * @param formationId - id de la formation souhaitée
+     * @returns - Retourne une liste contenant les leçons liées à la formation correspondant à l'id en paramètre
+     */
     async findLessonsByFormation(formationId: number): Promise<Lesson[]> {
         const existingFormation = await this.formationRepository.findOne({ where: {id: formationId}})
 
@@ -72,6 +82,12 @@ export class FormationService {
         })
     }
 
+    /**
+     * Méthode pour récupérer une lecon dans la formation sélectionnée
+     * @param formationId - Id de la formation souhaitée
+     * @param lessonId - Id de la leçon souhaitée
+     * @returns - Retourne la leçoncorrespondant à l'id en paramètre si cette lecon fait partie de la formation en id
+     */
     async findLessonById(formationId: number, lessonId: number): Promise<Lesson> {
         const existingFormation = await this.formationRepository.findOne({where: {id:formationId}})
 

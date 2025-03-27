@@ -4,6 +4,7 @@ import { FormationService } from './formation.service';
 import { Repository } from 'typeorm';
 import { Formation } from '../entities/formation.entity';
 import { Category } from 'src/entities/category.entity';
+import { Lesson } from 'src/entities/lesson.entity';
 
 describe('FormationController', () => {
   let formationController: FormationController;
@@ -16,8 +17,10 @@ describe('FormationController', () => {
         provide: FormationService,
         useValue: {
           findAll: jest.fn(),
-          findByCategory: jest.fn(),
-          findById: jest.fn()
+          findFormationByCategory: jest.fn(),
+          findFormationById: jest.fn(),
+          findLessonsByFormation: jest.fn(),
+          findLessonById: jest.fn()
         }
       }]
     }).compile()
@@ -53,11 +56,11 @@ describe('FormationController', () => {
       ]
 
       const mockCategoryId = 1 
-      jest.spyOn(formationService, 'findByCategory').mockResolvedValueOnce(mockFormations as Formation[])
-      const result = await formationController.findByCategory(mockCategoryId)
+      jest.spyOn(formationService, 'findFormationByCategory').mockResolvedValueOnce(mockFormations as Formation[])
+      const result = await formationController.findFormationByCategory(mockCategoryId)
 
-      expect(formationService.findByCategory).toHaveBeenCalledTimes(1)
-      expect(formationService.findByCategory).toHaveBeenCalledWith(mockCategoryId)
+      expect(formationService.findFormationByCategory).toHaveBeenCalledTimes(1)
+      expect(formationService.findFormationByCategory).toHaveBeenCalledWith(mockCategoryId)
       expect(result).toEqual(mockFormations)
     })
 
@@ -65,14 +68,45 @@ describe('FormationController', () => {
       const mockFormationId = 1
       const mockFormation: Partial<Formation> = { id: 1, name: 'Initiation au piano'}
 
-      jest.spyOn(formationService, 'findById').mockResolvedValueOnce(mockFormation as Formation)
+      jest.spyOn(formationService, 'findFormationById').mockResolvedValueOnce(mockFormation as Formation)
 
-      const result = await formationController.findById(mockFormationId)
+      const result = await formationController.findFormationById(mockFormationId)
 
-      expect(formationService.findById).toHaveBeenCalledTimes(1)
-      expect(formationService.findById).toHaveBeenCalledWith(mockFormationId)
+      expect(formationService.findFormationById).toHaveBeenCalledTimes(1)
+      expect(formationService.findFormationById).toHaveBeenCalledWith(mockFormationId)
       expect(result).toEqual(mockFormation)
+    })
 
+    it('Should return the list of lessons included in the chosen formation', async () => {
+      const mockFormationId = 1
+      const mockFormation: Partial<Formation> = {id: 1, name: 'Initiation au piano'}
+      const mockLesson: Partial<Lesson>[] = [
+        { id: 1, title: 'L\'instrument', formation: mockFormation[0]},
+        {id: 2, title:'Les accords', formation: mockFormation}
+      ]
+
+      jest.spyOn(formationService, 'findLessonsByFormation').mockResolvedValueOnce(mockLesson as Lesson[])
+
+      const result = await formationController.findLessonsByFormation(mockFormationId)
+
+      expect(formationService.findLessonsByFormation).toHaveBeenCalledTimes(1)
+      expect(formationService.findLessonsByFormation).toHaveBeenCalledWith(mockFormationId)
+      expect(result).toEqual(mockLesson)
+    })
+
+    it('Should return a lesson based on a formation', async() => {
+      const mockFormationId = 1
+      const mockLessonId = 1
+      const mockFormation: Partial<Formation> = {id: 1, name: 'Initiation au piano'}
+      const mockLesson: Partial<Lesson> = { id: 1, title: 'L\'instrument', formation: mockFormation[0]}
+
+      jest.spyOn(formationService, 'findLessonById').mockResolvedValueOnce(mockLesson as Lesson)
+
+      const result = await formationController.findLessonById(mockFormationId, mockLessonId)
+
+      expect(formationService.findLessonById).toHaveBeenCalledTimes(1)
+      expect(formationService.findLessonById).toHaveBeenLastCalledWith(mockFormationId, mockLessonId)
+      expect(result).toEqual(mockLesson)
     })
   })
 });

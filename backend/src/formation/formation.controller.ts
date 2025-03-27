@@ -15,6 +15,7 @@ export class FormationController {
     /**
      * Gère la route pour récupérer toutes les formations
      * @returns - Retourne une liste contenant toutes les formations
+     * Voir formation.service pour la logique
      */
     @Get('')
     async getAllFormation(): Promise<Formation[]> {
@@ -25,22 +26,42 @@ export class FormationController {
      * Gère la route pour récupérer les formation pour une catégorie choisie
      * @param categoryId - Id de la catégorie choisie
      * @returns - Retourne une liste de formations de la catégorie choisie
+     * Voir formation.service pour la logique
      */
     @Get('category/:categoryId')
     async findFormationByCategory(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<Formation[]> {
         return this.formationService.findFormationByCategory(categoryId)
     }
 
+    /**
+     * Gère la route pour récupérer la formation correspondant à l'id en paramètre
+     * @param formationId - Id de la formation choisie
+     * @returns - Retourne la formation correspondant à l'id en paramètre
+     * Voir formation.service pour la logique
+     */
     @Get('/:formationId')
     async findFormationById(@Param('formationId', ParseIntPipe) formationId: number): Promise<Formation> {
         return this.formationService.findFormationById(formationId)
     }
 
+    /**
+     * Gère la route pour récupérer toutes les leçons correspondant à la formation correspondant à l'id en paramètre
+     * @param formationId -Id de la formation choisie
+     * @returns - Retourne la liste des leçons liées à la formation
+     * Voir formation.service pour la logique
+     */
     @Get('/:formationId/lessons')
     async findLessonsByFormation(@Param('formationId', ParseIntPipe) formationId: number): Promise<Lesson[]> {
         return this.formationService.findLessonsByFormation(formationId)
     } 
 
+    /**
+     * Gère la route pour récupérer la leçon correspondant à l'id en paramètre parmi celles de la formation correspondant à l'id en paramètre
+     * @param formationId - Id de la formation choisie
+     * @param lessonId - Id de la leçon choisie
+     * @returns - Retourne la leçon correspondant à l'id en paramètre si elle se trouve dans la formation choisie
+     * Voir formation.service pour la logique
+     */
     @Get('/:formationId/:lessonId')
     async findLessonById(
         @Param('formationId', ParseIntPipe) formationId: number,
