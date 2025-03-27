@@ -4,6 +4,7 @@ import { FormationService } from './formation.service';
 import { Repository } from 'typeorm';
 import { Formation } from '../entities/formation.entity';
 import { Category } from 'src/entities/category.entity';
+import { Lesson } from 'src/entities/lesson.entity';
 
 describe('FormationController', () => {
   let formationController: FormationController;
@@ -17,7 +18,9 @@ describe('FormationController', () => {
         useValue: {
           findAll: jest.fn(),
           findFormationByCategory: jest.fn(),
-          findFormationById: jest.fn()
+          findFormationById: jest.fn(),
+          findLessonsByFormation: jest.fn(),
+          findLessonById: jest.fn()
         }
       }]
     }).compile()
@@ -72,7 +75,38 @@ describe('FormationController', () => {
       expect(formationService.findFormationById).toHaveBeenCalledTimes(1)
       expect(formationService.findFormationById).toHaveBeenCalledWith(mockFormationId)
       expect(result).toEqual(mockFormation)
+    })
 
+    it('Should return the list of lessons included in the chosen formation', async () => {
+      const mockFormationId = 1
+      const mockFormation: Partial<Formation> = {id: 1, name: 'Initiation au piano'}
+      const mockLesson: Partial<Lesson>[] = [
+        { id: 1, title: 'L\'instrument', formation: mockFormation[0]},
+        {id: 2, title:'Les accords', formation: mockFormation}
+      ]
+
+      jest.spyOn(formationService, 'findLessonsByFormation').mockResolvedValueOnce(mockLesson as Lesson[])
+
+      const result = await formationController.findLessonsByFormation(mockFormationId)
+
+      expect(formationService.findLessonsByFormation).toHaveBeenCalledTimes(1)
+      expect(formationService.findLessonsByFormation).toHaveBeenCalledWith(mockFormationId)
+      expect(result).toEqual(mockLesson)
+    })
+
+    it('Should return a lesson based on a formation', async() => {
+      const mockFormationId = 1
+      const mockLessonId = 1
+      const mockFormation: Partial<Formation> = {id: 1, name: 'Initiation au piano'}
+      const mockLesson: Partial<Lesson> = { id: 1, title: 'L\'instrument', formation: mockFormation[0]}
+
+      jest.spyOn(formationService, 'findLessonById').mockResolvedValueOnce(mockLesson as Lesson)
+
+      const result = await formationController.findLessonById(mockFormationId, mockLessonId)
+
+      expect(formationService.findLessonById).toHaveBeenCalledTimes(1)
+      expect(formationService.findLessonById).toHaveBeenLastCalledWith(mockFormationId, mockLessonId)
+      expect(result).toEqual(mockLesson)
     })
   })
 });
