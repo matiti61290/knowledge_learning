@@ -7,7 +7,6 @@ import { CreateUserDto } from '../../dto/create-user.dto';
 import { ConfirmMailService } from '../../mail/confirmMail/confirmMail.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
-import { NotFoundError } from 'rxjs';
 
 /**
  * Gère la partie logique de l'inscription et de la validation de l'email

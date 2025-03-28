@@ -12,6 +12,7 @@ import { LoginModule } from './auth/login/login.module';
 import { ForgotPasswordModule } from './auth/forgot-password/forgot-password.module';
 import { FormationController } from './formation/formation.controller';
 import { FormationModule } from './formation/formation.module';
+import { PaymentModule } from './payment/payment.module';
 
 
 
@@ -26,6 +27,7 @@ import { FormationModule } from './formation/formation.module';
     LoginModule,
     ForgotPasswordModule,
     FormationModule,
+    PaymentModule
   ],
   controllers: [AppController, UserController, RegisterController, FormationController],
   providers: [AppService],
