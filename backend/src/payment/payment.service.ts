@@ -34,7 +34,7 @@ export class PaymentService {
                     }
                 ],
                 mode: 'payment',
-                success_url: 'http://localhost:4242/success.html',
+                success_url: 'http://localhost:3000/payment/success',
                 cancel_url: 'http://localhost:4242/cancel.html',
                 metadata: {
                     productId: productId
