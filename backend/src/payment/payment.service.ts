@@ -4,6 +4,8 @@ import { Formation } from '../entities/formation.entity';
 import { Lesson } from '../entities/lesson.entity'
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/entities/user.entity';
 import * as dotenv from 'dotenv'
 
 dotenv.config()
@@ -15,7 +17,11 @@ export class PaymentService {
         private readonly formationRepository: Repository<Formation>,
 
         @InjectRepository(Lesson)
-        private readonly lessonRepository: Repository<Lesson>
+        private readonly lessonRepository: Repository<Lesson>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        private readonly jwtService: JwtService
     ){
         const secretKey = process.env.STRIPE_SECRET
 
@@ -26,7 +32,7 @@ export class PaymentService {
         this.stripe = new Stripe(secretKey)
     }
 
-    async createCheckoutSessionFormation(id: number): Promise<Stripe.Checkout.Session> {
+    async createCheckoutSessionFormation(id: number, user: any): Promise<Stripe.Checkout.Session> {
         const selectedFormation = await this.formationRepository.findOne({ where: { id: id}})
 
         if(!selectedFormation) {
@@ -63,9 +69,13 @@ export class PaymentService {
         }
     }
 
-    async createCheckoutSessionLesson(id: number): Promise<Stripe.Checkout.Session> {
+    async createCheckoutSessionLesson(id: number, user:any): Promise<Stripe.Checkout.Session> {
         const selectedLesson = await this.lessonRepository.findOne({where: {id: id}})
         
+        const currentUser = user
+
+        console.log(currentUser)
+
         if (!selectedLesson){
             throw new NotFoundException('Cette lecon n\'existe pas.')
         }

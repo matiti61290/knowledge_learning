@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { Stripe } from 'stripe'
+import { RolesGuard } from 'src/auth/login/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('payment')
 export class PaymentController {
@@ -16,12 +18,14 @@ export class PaymentController {
     // }
 
     @Post('create-checkout-session/:type/:id')
+    @UseGuards(RolesGuard)
+    @Roles('student', 'admin')
     async createCheckoutSession(
-        @Param('type') type: string, @Param('id') id: number){
+        @User() user, @Param('type') type: string, @Param('id') id: number, @Query('token') token: string){
             if(type === 'formation'){
-                return this.paymentService.createCheckoutSessionFormation(id)
+                return this.paymentService.createCheckoutSessionFormation(id, user)
             } else if (type === 'lesson'){
-                return this.paymentService.createCheckoutSessionLesson(id)
+                return this.paymentService.createCheckoutSessionLesson(id, user)
             }
         }
 

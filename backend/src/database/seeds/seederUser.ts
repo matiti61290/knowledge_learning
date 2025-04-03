@@ -1,6 +1,7 @@
 import { User } from "../../entities/user.entity";
 import { Role } from "../../entities/role.entity";
 import dataSource from "../ormconfig";
+import * as bcrypt from 'bcrypt'
 
 async function seedUser() {
     try{
@@ -18,8 +19,12 @@ async function seedUser() {
             return;
         }
 
+        const password = "Knowledge_admin@61"
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+
         const users = [
-            {firstname:'Knowledge', lastname:'Learning', mail:'admin@knowledgelearning.com', password:'knowledge_admin', is_verified: true, roles: adminRole ? [adminRole]: []}
+            {firstname:'Knowledge', lastname:'Learning', mail:'admin@knowledgelearning.com', password: hashedPassword, is_verified: true, roles: adminRole ? [adminRole]: []}
         ]
 
         try{
