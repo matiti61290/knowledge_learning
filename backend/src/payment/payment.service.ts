@@ -35,6 +35,8 @@ export class PaymentService {
     async createCheckoutSessionFormation(id: number, user: any): Promise<Stripe.Checkout.Session> {
         const selectedFormation = await this.formationRepository.findOne({ where: { id: id}})
 
+        const currentUser = user
+
         if(!selectedFormation) {
             throw new NotFoundException('Cette formation n\'existe pas')
         }
@@ -58,7 +60,8 @@ export class PaymentService {
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
                     lessonName: selectedFormation.name,
-                    lessonPrice: selectedFormation.price
+                    lessonPrice: selectedFormation.price,
+                    userMail: currentUser.email
                 }
             })
 
@@ -73,8 +76,6 @@ export class PaymentService {
         const selectedLesson = await this.lessonRepository.findOne({where: {id: id}})
         
         const currentUser = user
-
-        console.log(currentUser)
 
         if (!selectedLesson){
             throw new NotFoundException('Cette lecon n\'existe pas.')
@@ -98,8 +99,11 @@ export class PaymentService {
                 success_url: 'http://localhost:3000/payment/payment-success',
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
+                    lessonId: selectedLesson.id,
                     lessonName: selectedLesson.title,
-                    lessonPrice: selectedLesson.price
+                    lessonPrice: selectedLesson.price,
+                    userId: currentUser.id,
+                    userMail: currentUser.email
                 }
             })
 
