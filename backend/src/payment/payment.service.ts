@@ -1,5 +1,6 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Stripe } from 'stripe'
+import { Request, Response} from 'express'
 import { Formation } from '../entities/formation.entity';
 import { Lesson } from '../entities/lesson.entity'
 import { Repository } from 'typeorm';
@@ -32,7 +33,7 @@ export class PaymentService {
         this.stripe = new Stripe(secretKey)
     }
 
-    async createCheckoutSessionFormation(id: number, user: any): Promise<Stripe.Checkout.Session> {
+    async createCheckoutSessionFormation(id: number, user: any, type: string): Promise<Stripe.Checkout.Session> {
         const selectedFormation = await this.formationRepository.findOne({ where: { id: id}})
 
         const currentUser = user
@@ -59,9 +60,9 @@ export class PaymentService {
                 success_url: 'http://localhost:3000/payment/payment-success',
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
-                    lessonName: selectedFormation.name,
-                    lessonPrice: selectedFormation.price,
-                    userMail: currentUser.email
+                    lessonId: selectedFormation.id,
+                    userId: currentUser.id,
+                    type: type
                 }
             })
 
@@ -72,7 +73,7 @@ export class PaymentService {
         }
     }
 
-    async createCheckoutSessionLesson(id: number, user:any): Promise<Stripe.Checkout.Session> {
+    async createCheckoutSessionLesson(id: number, user:any, type: string): Promise<Stripe.Checkout.Session> {
         const selectedLesson = await this.lessonRepository.findOne({where: {id: id}})
         
         const currentUser = user
@@ -100,10 +101,8 @@ export class PaymentService {
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
                     lessonId: selectedLesson.id,
-                    lessonName: selectedLesson.title,
-                    lessonPrice: selectedLesson.price,
                     userId: currentUser.id,
-                    userMail: currentUser.email
+                    type: type
                 }
             })
 
@@ -113,4 +112,7 @@ export class PaymentService {
             throw new InternalServerErrorException(' Failed to create checkout session')
         }
     }
+
+    // Webhook
+   
 }
