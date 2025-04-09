@@ -37,42 +37,11 @@ export class PaymentController {
     @Post('webhook')
     @HttpCode(HttpStatus.OK)
     async handleStripeWebhook(
-        @Req() request: Request,
-        @Res() response: Response,
+        @Req() req: Request,
+        @Res() res: Response,
         @Headers('stripe-signature') signature: string
     ){
-        console.log('le webhook est appele')
-        console.log('signature :',signature)
-        console.log('Buffer :', Buffer.isBuffer(request.body))
-        const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
-
-        if(!endpointSecret) {
-            throw new NotFoundException('Webhook key not found')
-        }
-
-        let event: Stripe.Event
-        try{
-            event = this.stripe.webhooks.constructEvent(
-                request.body,
-                signature,
-                endpointSecret
-            )
-        } catch (error) {
-            console.error('Webhook signature verification failed', error.message)
-            return response.status(400).send(`Webhook error: ${error.message}`)
-        }
-
-        switch (event.type) {
-            case 'checkout.session.completed' :
-                const session = event.data.object as Stripe.Checkout.Session
-                console.log('Paiement confirme pour session:', session.id)
-                break
-            
-            default:
-                console.log(`event non gere: ${event.type}`)
-        }
-
-        return response.send({received: true})
+        return this.paymentService.construcEventWebhook(req, res, signature)
     }
 
     @Get('payment-success')

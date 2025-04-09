@@ -60,7 +60,7 @@ export class PaymentService {
                 success_url: 'http://localhost:3000/payment/payment-success',
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
-                    lessonId: selectedFormation.id,
+                    itemId: selectedFormation.id,
                     userId: currentUser.id,
                     type: type
                 }
@@ -100,12 +100,13 @@ export class PaymentService {
                 success_url: 'http://localhost:3000/payment/payment-success',
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
-                    lessonId: selectedLesson.id,
+                    itemId: selectedLesson.id,
                     userId: currentUser.id,
                     type: type
                 }
             })
-
+            
+            console.log(session.metadata)
             return session
         } catch (error) {
             console.error('Error creating session', error)
@@ -114,5 +115,52 @@ export class PaymentService {
     }
 
     // Webhook
-   
+   async construcEventWebhook(req, res, signature) {
+    console.log('Le service est appele')
+    console.log('signature :', signature)
+    console.log('Buffer :', Buffer.isBuffer(req.body))
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+    if(!endpointSecret) {
+        throw new NotFoundException('Webhook key not found')
+    }
+
+    let event: Stripe.Event
+        try{
+            event = this.stripe.webhooks.constructEvent(
+                req.body,
+                signature,
+                endpointSecret
+            )
+        } catch (error) {
+            console.error('Webhook signature verification failed', error.message)
+            return res.status(400).send(`Webhook error: ${error.message}`)
+        }
+
+        if(event.type === 'checkout.session.completed') {
+            const session = event.data.object as Stripe.Checkout.Session
+                console.log('Paiement confirme pour session:', session.id)
+                const metadata = session.metadata
+                if(!metadata){
+                    throw new InternalServerErrorException('Les metadatas n\'existent pas')
+                }
+
+                const userId = metadata.userId
+                const type = metadata.type
+                const itemId = metadata.itemId
+
+                if(!userId || !type || !itemId){
+                    throw new InternalServerErrorException('Il manque des metadatas')
+                } else {
+                    console.log('les metadata sont recuperees', metadata)
+                }
+
+                console.log('user id :', userId,', type :', type, ',  item id :', itemId)
+                
+        } else {
+            console.log(`event non gere: ${event.type}`)
+        }
+
+        return res.send({received: true})
+   }
 }

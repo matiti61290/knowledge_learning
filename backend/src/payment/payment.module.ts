@@ -17,7 +17,6 @@ import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 })
 export class PaymentModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).exclude('payment/webhook').forRoutes(PaymentController)
+    consumer.apply(AuthMiddleware).exclude('payment/webhook', 'payment/payment-success').forRoutes(PaymentController)
   }
 }
-// export class PaymentModule{}
