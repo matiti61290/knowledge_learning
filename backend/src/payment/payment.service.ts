@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Stripe } from 'stripe'
 import { Request, Response} from 'express'
 import { Formation } from '../entities/formation.entity';
@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
 import * as dotenv from 'dotenv'
+import { throwError } from 'rxjs';
 
 dotenv.config()
 @Injectable()
@@ -33,7 +34,7 @@ export class PaymentService {
         this.stripe = new Stripe(secretKey)
     }
 
-    async createCheckoutSessionFormation(id: number, user: any, type: string): Promise<Stripe.Checkout.Session> {
+    async createCheckoutSessionFormation(id: number, user: any, type: string, token): Promise<Stripe.Checkout.Session> {
         const selectedFormation = await this.formationRepository.findOne({ where: { id: id}})
 
         const currentUser = user
@@ -62,7 +63,8 @@ export class PaymentService {
                 metadata: {
                     itemId: selectedFormation.id,
                     userId: currentUser.id,
-                    type: type
+                    type: type,
+                    token: token
                 }
             })
 
@@ -145,9 +147,9 @@ export class PaymentService {
                     throw new InternalServerErrorException('Les metadatas n\'existent pas')
                 }
 
-                const userId = metadata.userId
+                const userId = Number(metadata.userId)
                 const type = metadata.type
-                const itemId = metadata.itemId
+                const itemId = Number(metadata.itemId)
 
                 if(!userId || !type || !itemId){
                     throw new InternalServerErrorException('Il manque des metadatas')
@@ -155,12 +157,38 @@ export class PaymentService {
                     console.log('les metadata sont recuperees', metadata)
                 }
 
-                console.log('user id :', userId,', type :', type, ',  item id :', itemId)
-                
+                this.createPurchase(userId, type, itemId)
+            
         } else {
             console.log(`event non gere: ${event.type}`)
         }
 
         return res.send({received: true})
+   }
+
+   async createPurchase(userId: number, type: string, itemId: number){
+    const user = await this.userRepository.findOne({where: {id: userId}})
+
+    if(!user){
+        throw new NotFoundException('User not found')
+    }
+    console.log(user.mail)
+
+    let formation: Formation | null = null
+    let lesson: Lesson | null = null
+
+    if(type === 'formation'){
+        formation = await this.formationRepository.findOne({where: {id: itemId}})
+        if(!formation){
+            throw new NotFoundException('Formaiton introuvable')
+        }
+        console.log(formation)
+    } else if(type === 'lesson') {
+        lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
+        if(!lesson){
+            throw new NotFoundException('Lesson introuvable')
+        }
+        console.log(lesson)
+    }
    }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, UseGuards, Query, NotFoundException, HttpCode, HttpStatus, Req, Res, Headers } from '@nestjs/common';
+import { Controller, Post, Get, Param, UseGuards, Query, NotFoundException, HttpCode, HttpStatus, Req, Res, Headers, BadRequestException } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { RolesGuard } from 'src/auth/login/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -28,7 +28,7 @@ export class PaymentController {
     async createCheckoutSession(
     @User() user, @Param('type') type: string, @Param('id') id: number, @Query('token') token: string){
         if(type === 'formation'){
-            return this.paymentService.createCheckoutSessionFormation(id, user, type)
+            return this.paymentService.createCheckoutSessionFormation(id, user, type, token)
         } else if (type === 'lesson'){
             return this.paymentService.createCheckoutSessionLesson(id, user, type)
         }
