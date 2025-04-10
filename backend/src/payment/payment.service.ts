@@ -209,6 +209,12 @@ export class PaymentService {
             throw new NotFoundException('Lesson introuvable')
         }
         console.log(lesson.title)
+
+        const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
+        await this.userProgressRepository.save(newLesson)
+
+        const purchase = await this.purchaseRepository.create({ user, lesson})
+        await this.purchaseRepository.save(purchase)
     }
 
     
