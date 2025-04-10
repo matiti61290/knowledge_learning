@@ -1,12 +1,14 @@
-import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Stripe } from 'stripe'
 import { Request, Response} from 'express'
 import { Formation } from '../entities/formation.entity';
 import { Lesson } from '../entities/lesson.entity'
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
+import { Purchase } from 'src/entities/purchase.entity';
+import { UserProgress } from 'src/entities/userProgress.entity';
 import * as dotenv from 'dotenv'
 
 dotenv.config()
@@ -22,6 +24,12 @@ export class PaymentService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
 
+        @InjectRepository(Purchase)
+        private readonly purchaseRepository: Repository<Purchase>,
+
+        @InjectRepository(UserProgress)
+        private readonly userProgressRepository: Repository<UserProgress>,
+
         private readonly jwtService: JwtService
     ){
         const secretKey = process.env.STRIPE_SECRET
@@ -33,7 +41,7 @@ export class PaymentService {
         this.stripe = new Stripe(secretKey)
     }
 
-    async createCheckoutSessionFormation(id: number, user: any, type: string): Promise<Stripe.Checkout.Session> {
+    async createCheckoutSessionFormation(id: number, user: any, type: string, token): Promise<Stripe.Checkout.Session> {
         const selectedFormation = await this.formationRepository.findOne({ where: { id: id}})
 
         const currentUser = user
@@ -60,9 +68,10 @@ export class PaymentService {
                 success_url: 'http://localhost:3000/payment/payment-success',
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
-                    lessonId: selectedFormation.id,
+                    itemId: selectedFormation.id,
                     userId: currentUser.id,
-                    type: type
+                    type: type,
+                    token: token
                 }
             })
 
@@ -100,12 +109,13 @@ export class PaymentService {
                 success_url: 'http://localhost:3000/payment/payment-success',
                 cancel_url: 'http://localhost:3000/payment/payment-cancel',
                 metadata: {
-                    lessonId: selectedLesson.id,
+                    itemId: selectedLesson.id,
                     userId: currentUser.id,
                     type: type
                 }
             })
-
+            
+            console.log(session.metadata)
             return session
         } catch (error) {
             console.error('Error creating session', error)
@@ -114,5 +124,119 @@ export class PaymentService {
     }
 
     // Webhook
-   
+   async construcEventWebhook(req, res, signature) {
+    console.log('Le service est appele')
+    console.log('signature :', signature)
+    console.log('Buffer :', Buffer.isBuffer(req.body))
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+    if(!endpointSecret) {
+        throw new NotFoundException('Webhook key not found')
+    }
+
+    let event: Stripe.Event
+        try{
+            event = this.stripe.webhooks.constructEvent(
+                req.body,
+                signature,
+                endpointSecret
+            )
+        } catch (error) {
+            console.error('Webhook signature verification failed', error.message)
+            return res.status(400).send(`Webhook error: ${error.message}`)
+        }
+
+        if(event.type === 'checkout.session.completed') {
+            const session = event.data.object as Stripe.Checkout.Session
+                console.log('Paiement confirme pour session:', session.id)
+                const metadata = session.metadata
+                if(!metadata){
+                    throw new InternalServerErrorException('Les metadatas n\'existent pas')
+                }
+
+                const userId = Number(metadata.userId)
+                const type = metadata.type
+                const itemId = Number(metadata.itemId)
+
+                if(!userId || !type || !itemId){
+                    throw new InternalServerErrorException('Il manque des metadatas')
+                } else {
+                    console.log('les metadata sont recuperees', metadata)
+                }
+
+                this.createPurchase(userId, type, itemId)
+            
+        } else {
+            console.log(`event non gere: ${event.type}`)
+        }
+
+        return res.send({received: true})
+   }
+
+
+
+   async createPurchase(userId: number, type: string, itemId: number){
+    // find user in the database
+    const user = await this.userRepository.findOne({where: {id: userId}})
+
+    // throw an error if user not found
+    if(!user){
+        throw new NotFoundException('User not found')
+    }
+    console.log(user.mail)
+
+    let formation: Formation | null = null
+    let lesson: Lesson | null = null
+
+    // save the purchase and add lessons for the choosen formation if type = formation or if type = lesson
+    if(type === 'formation'){
+        formation = await this.formationRepository.findOne({where: {id: itemId}})
+
+        
+        const lessons: Lesson[] = await this.lessonRepository.find({where: {formation: {id: itemId}}, relations:['formation']})
+        if(!formation){
+            throw new NotFoundException('Formaiton introuvable')
+        }
+        if(!lessons){
+            throw new NotFoundException('Lessons introuvable')
+        }
+
+        // check if formation isn't already purchased and if one of lessons in the formation isn't already purchased
+        const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, formation: {id: formation.id}}})
+        const existingLessonPurchase = await this.purchaseRepository.findOne({ where:{ user: {id:user.id}, lesson: {id: In(lessons.map(lesson => lesson.id))}}})
+
+        if(existingPurchace){
+            throw new ConflictException('formation deja achetee')
+        } else if(existingLessonPurchase) {
+            throw new ConflictException('Une des lecons est deja achetee')
+        } else {
+            for(const lesson of lessons){
+                const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
+                await this.userProgressRepository.save(newLesson)
+            }
+    
+    
+            const purchase = await this. purchaseRepository.create({ user, formation })
+            
+            return this.purchaseRepository.save(purchase)
+        }
+    } else if(type === 'lesson') {
+        lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
+        if(!lesson){
+            throw new NotFoundException('Lesson introuvable')
+        }
+        
+        const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, lesson: {id: lesson.id}}})
+
+        if(existingPurchace){
+            throw new ConflictException('Lecon deja achetee')
+        } else {
+            const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
+            await this.userProgressRepository.save(newLesson)
+    
+            const purchase = await this.purchaseRepository.create({ user, lesson})
+            await this.purchaseRepository.save(purchase)
+        }
+    }
+   }
 }
