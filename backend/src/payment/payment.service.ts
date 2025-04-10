@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 /**
- * Gere la partie logique du paiement
+ * Gère la partie logique du paiement
  */
 @Injectable()
 export class PaymentService {
