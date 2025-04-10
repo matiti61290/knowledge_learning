@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Formation } from "./formation.entity";
 import { Lesson } from "./lesson.entity";
@@ -9,10 +9,10 @@ export class Purchase {
     @PrimaryGeneratedColumn({ type: 'int' })
     id: number;
 
-    @Column()
+    @CreateDateColumn()
     purchase_date: Date;
 
-    @Column()
+    @UpdateDateColumn()
     completion_date: Date;
 
     @ManyToOne(()=> User, (user)=> user.purchases)

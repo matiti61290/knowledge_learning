@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Formation } from "./formation.entity";
 
@@ -18,4 +18,10 @@ export class UserCertification {
 
     @ManyToOne(()=> Formation, (formation)=> formation.certificates)
     formation: Formation;
+
+    @CreateDateColumn()
+    created_at: Date
+
+    @UpdateDateColumn()
+    updated_at
 }

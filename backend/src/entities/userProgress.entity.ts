@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Lesson } from "./lesson.entity";
 
@@ -15,4 +15,10 @@ export class UserProgress {
 
     @ManyToOne(()=> Lesson, (lesson)=> lesson.progresses)
     lesson: Lesson;
+
+    @CreateDateColumn()
+    created_at: Date
+
+    @UpdateDateColumn()
+    updated_at: Date
 }

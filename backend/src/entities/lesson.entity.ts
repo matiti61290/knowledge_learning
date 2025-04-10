@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Formation } from "./formation.entity";
 import { Purchase } from "./purchase.entity";
@@ -40,4 +40,10 @@ export class Lesson{
     @ManyToOne(()=> User, (user)=> user.updated_lessons)
     @JoinColumn({ name: 'updated_by' })
     updatedBy: User;
+
+    @CreateDateColumn()
+    created_at: Date
+
+    @UpdateDateColumn()
+    updated_at: Date
 }

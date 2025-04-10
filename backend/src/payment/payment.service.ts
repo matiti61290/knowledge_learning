@@ -7,8 +7,9 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
+import { Purchase } from 'src/entities/purchase.entity';
+import { UserProgress } from 'src/entities/userProgress.entity';
 import * as dotenv from 'dotenv'
-import { throwError } from 'rxjs';
 
 dotenv.config()
 @Injectable()
@@ -22,6 +23,12 @@ export class PaymentService {
         private readonly lessonRepository: Repository<Lesson>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+
+        @InjectRepository(Purchase)
+        private readonly purchaseRepository: Repository<Purchase>,
+
+        @InjectRepository(UserProgress)
+        private readonly userProgressRepository: Repository<UserProgress>,
 
         private readonly jwtService: JwtService
     ){
@@ -179,16 +186,31 @@ export class PaymentService {
 
     if(type === 'formation'){
         formation = await this.formationRepository.findOne({where: {id: itemId}})
+        const lessons: Lesson[] = await this.lessonRepository.find({where: {formation: {id: itemId}}, relations:['formation']})
         if(!formation){
             throw new NotFoundException('Formaiton introuvable')
         }
-        console.log(formation)
+        if(!lessons){
+            throw new NotFoundException('Lessons introuvable')
+        }
+
+        for(const lesson of lessons){
+            const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
+            await this.userProgressRepository.save(newLesson)
+        }
+
+
+        const purchase = await this. purchaseRepository.create({ user, formation })
+        
+        return this.purchaseRepository.save(purchase)
     } else if(type === 'lesson') {
         lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
         if(!lesson){
             throw new NotFoundException('Lesson introuvable')
         }
-        console.log(lesson)
+        console.log(lesson.title)
     }
+
+    
    }
 }
