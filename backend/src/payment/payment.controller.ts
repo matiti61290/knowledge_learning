@@ -26,9 +26,9 @@ export class PaymentController {
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
     async createCheckoutSession(
-    @User() user, @Param('type') type: string, @Param('id') id: number, @Query('token') token: string){
+    @User() user, @Param('type') type: string, @Param('id') id: number){
         if(type === 'formation'){
-            return this.paymentService.createCheckoutSessionFormation(id, user, type, token)
+            return this.paymentService.createCheckoutSessionFormation(id, user, type)
         } else if (type === 'lesson'){
             return this.paymentService.createCheckoutSessionLesson(id, user, type)
         }
