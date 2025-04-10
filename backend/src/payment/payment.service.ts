@@ -1,9 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Stripe } from 'stripe'
 import { Request, Response} from 'express'
 import { Formation } from '../entities/formation.entity';
 import { Lesson } from '../entities/lesson.entity'
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
@@ -173,9 +173,13 @@ export class PaymentService {
         return res.send({received: true})
    }
 
+
+
    async createPurchase(userId: number, type: string, itemId: number){
+    // find user in the database
     const user = await this.userRepository.findOne({where: {id: userId}})
 
+    // throw an error if user not found
     if(!user){
         throw new NotFoundException('User not found')
     }
@@ -184,8 +188,11 @@ export class PaymentService {
     let formation: Formation | null = null
     let lesson: Lesson | null = null
 
+    // save the purchase and add lessons for the choosen formation if type = formation or if type = lesson
     if(type === 'formation'){
         formation = await this.formationRepository.findOne({where: {id: itemId}})
+
+        
         const lessons: Lesson[] = await this.lessonRepository.find({where: {formation: {id: itemId}}, relations:['formation']})
         if(!formation){
             throw new NotFoundException('Formaiton introuvable')
@@ -194,29 +201,42 @@ export class PaymentService {
             throw new NotFoundException('Lessons introuvable')
         }
 
-        for(const lesson of lessons){
-            const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
-            await this.userProgressRepository.save(newLesson)
+        // check if formation isn't already purchased and if one of lessons in the formation isn't already purchased
+        const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, formation: {id: formation.id}}})
+        const existingLessonPurchase = await this.purchaseRepository.findOne({ where:{ user: {id:user.id}, lesson: {id: In(lessons.map(lesson => lesson.id))}}})
+
+        if(existingPurchace){
+            throw new ConflictException('formation deja achetee')
+        } else if(existingLessonPurchase) {
+            throw new ConflictException('Une des lecons est deja achetee')
+        } else {
+            for(const lesson of lessons){
+                const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
+                await this.userProgressRepository.save(newLesson)
+            }
+    
+    
+            const purchase = await this. purchaseRepository.create({ user, formation })
+            
+            return this.purchaseRepository.save(purchase)
         }
-
-
-        const purchase = await this. purchaseRepository.create({ user, formation })
-        
-        return this.purchaseRepository.save(purchase)
     } else if(type === 'lesson') {
         lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
         if(!lesson){
             throw new NotFoundException('Lesson introuvable')
         }
-        console.log(lesson.title)
+        
+        const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, lesson: {id: lesson.id}}})
 
-        const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
-        await this.userProgressRepository.save(newLesson)
-
-        const purchase = await this.purchaseRepository.create({ user, lesson})
-        await this.purchaseRepository.save(purchase)
-    }
-
+        if(existingPurchace){
+            throw new ConflictException('Lecon deja achetee')
+        } else {
+            const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
+            await this.userProgressRepository.save(newLesson)
     
+            const purchase = await this.purchaseRepository.create({ user, lesson})
+            await this.purchaseRepository.save(purchase)
+        }
+    }
    }
 }
