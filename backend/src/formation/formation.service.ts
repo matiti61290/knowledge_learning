@@ -4,6 +4,7 @@ import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
+import { User } from '../entities/user.entity'
 
 /**
  * Gère la partie logique des formations
@@ -18,7 +19,10 @@ export class FormationService {
         private readonly categoryRepository: Repository<Category>,
 
         @InjectRepository(Lesson)
-        private readonly lessonRepository: Repository<Lesson>
+        private readonly lessonRepository: Repository<Lesson>,
+
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>
     ) {}
 
     /**
@@ -108,6 +112,17 @@ export class FormationService {
             throw new NotFoundException('Cette lecon n\'existe pas pour cette formation')
         }
 
+        return lesson
+    }
+
+    async validateLesson( user: any, lessonId: number) {
+        console.log('le service est call')
+        
+        const lesson = await this.lessonRepository.findOne({where: {id: lessonId}})
+
+        const currentUser = user
+
+        console.log(currentUser)
         return lesson
     }
 }

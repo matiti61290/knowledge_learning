@@ -1,15 +1,23 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Formation } from 'src/entities/formation.entity';
 import { FormationController } from './formation.controller';
 import { FormationService } from './formation.service';
 import { Category } from 'src/entities/category.entity';
 import { Lesson } from 'src/entities/lesson.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { User } from '../entities/user.entity';
+import { LoginModule } from 'src/auth/login/login.module';
+import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Formation, Category, Lesson])],
+    imports:[TypeOrmModule.forFeature([Formation, Category, Lesson, User]), JwtModule, forwardRef(() => LoginModule)],
     controllers: [FormationController],
     providers: [FormationService],
     exports: [FormationService]
 })
-export class FormationModule {}
+export class FormationModule implements NestModule{
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(AuthMiddleware).forRoutes(FormationController)
+    }
+}

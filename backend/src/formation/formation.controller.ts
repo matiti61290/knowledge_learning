@@ -1,7 +1,10 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { Formation } from 'src/entities/formation.entity';
 import { FormationService } from './formation.service';
 import { Lesson } from 'src/entities/lesson.entity';
+import { User } from 'src/decorators/user.decorator';
+import { RolesGuard } from 'src/auth/login/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
 /**
  * Gère les routes pour les formations
@@ -68,5 +71,15 @@ export class FormationController {
         @Param('lessonId', ParseIntPipe) lessonId: number
     ): Promise<Lesson> {
         return this.formationService.findLessonById(formationId, lessonId)
+    }
+
+    @Post('/validate/:lessonId')
+    @UseGuards(RolesGuard)
+    @Roles('student', 'admin')
+    async validateLesson(
+        @User() user,
+        @Param('lessonId', ParseIntPipe) lessonId: number
+    ) {
+        return this.formationService.validateLesson(user, lessonId)
     }
 }

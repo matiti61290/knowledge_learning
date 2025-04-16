@@ -184,7 +184,7 @@ export class PaymentService {
         }
 
         return res.send({received: true})
-   }
+    }
 
 
    /**
@@ -193,65 +193,65 @@ export class PaymentService {
     * @param type - Permet de savoir s'il s'agit d'une formation ou d'une leçon
     * @param itemId - Id de la formation/leçon
     */
-   async createPurchase(userId: number, type: string, itemId: number){
+    async createPurchase(userId: number, type: string, itemId: number){
     // find user in the database
-    const user = await this.userRepository.findOne({where: {id: userId}})
+        const user = await this.userRepository.findOne({where: {id: userId}})
 
-    if(!user){
-        throw new NotFoundException('User not found')
-    }
-
-    let formation: Formation | null = null
-    let lesson: Lesson | null = null
-
-    // save the purchase and add lessons for the choosen formation if type = formation or if type = lesson
-    if(type === 'formation'){
-        formation = await this.formationRepository.findOne({where: {id: itemId}})
-
-        //Get lessons of this formation
-        const lessons: Lesson[] = await this.lessonRepository.find({where: {formation: {id: itemId}}, relations:['formation']})
-        if(!formation){
-            throw new NotFoundException('Formation not found')
-        }
-        if(!lessons){
-            throw new NotFoundException('Lessons not found')
+        if(!user){
+            throw new NotFoundException('User not found')
         }
 
-        // check if formation isn't already purchased and if one of lessons in the formation isn't already purchased
-        const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, formation: {id: formation.id}}})
-        const existingLessonPurchase = await this.purchaseRepository.findOne({ where:{ user: {id:user.id}, lesson: {id: In(lessons.map(lesson => lesson.id))}}})
+        let formation: Formation | null = null
+        let lesson: Lesson | null = null
 
-        if(existingPurchace){
-            throw new ConflictException('Formation already bought')
-        } else if(existingLessonPurchase) {
-            throw new ConflictException('One of these lessons is already bought')
-        } else {
-            for(const lesson of lessons){
-                const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
-                await this.userProgressRepository.save(newLesson)
+        // save the purchase and add lessons for the choosen formation if type = formation or if type = lesson
+        if(type === 'formation'){
+            formation = await this.formationRepository.findOne({where: {id: itemId}})
+
+            //Get lessons of this formation
+            const lessons: Lesson[] = await this.lessonRepository.find({where: {formation: {id: itemId}}, relations:['formation']})
+            if(!formation){
+                throw new NotFoundException('Formation not found')
             }
-    
-            const purchase = await this. purchaseRepository.create({ user, formation })
-            
-            return this.purchaseRepository.save(purchase)
-        }
-    } else if (type === 'lesson') {
-        lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
-        if(!lesson){
-            throw new NotFoundException('Lesson not found')
-        }
-        
-        const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, lesson: {id: lesson.id}}})
+            if(!lessons){
+                throw new NotFoundException('Lessons not found')
+            }
 
-        if(existingPurchace){
-            throw new ConflictException('Lecon already bought')
-        } else {
-            const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
-            await this.userProgressRepository.save(newLesson)
-    
-            const purchase = await this.purchaseRepository.create({ user, lesson})
-            await this.purchaseRepository.save(purchase)
+            // check if formation isn't already purchased and if one of lessons in the formation isn't already purchased
+            const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, formation: {id: formation.id}}})
+            const existingLessonPurchase = await this.purchaseRepository.findOne({ where:{ user: {id:user.id}, lesson: {id: In(lessons.map(lesson => lesson.id))}}})
+
+            if(existingPurchace){
+                throw new ConflictException('Formation already bought')
+            } else if(existingLessonPurchase) {
+                throw new ConflictException('One of these lessons is already bought')
+            } else {
+                for(const lesson of lessons){
+                    const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
+                    await this.userProgressRepository.save(newLesson)
+                }
+        
+                const purchase = await this. purchaseRepository.create({ user, formation })
+                
+                return this.purchaseRepository.save(purchase)
+            }
+        } else if (type === 'lesson') {
+            lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
+            if(!lesson){
+                throw new NotFoundException('Lesson not found')
+            }
+            
+            const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, lesson: {id: lesson.id}}})
+
+            if(existingPurchace){
+                throw new ConflictException('Lesson already bought')
+            } else {
+                const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
+                await this.userProgressRepository.save(newLesson)
+        
+                const purchase = await this.purchaseRepository.create({ user, lesson})
+                await this.purchaseRepository.save(purchase)
+            }
         }
     }
-   }
 }
