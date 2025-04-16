@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
+import { UserProgress } from 'src/entities/userProgress.entity';
 
 /**
  * Gère la partie logique des formations
@@ -22,7 +23,10 @@ export class FormationService {
         private readonly lessonRepository: Repository<Lesson>,
 
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>
+        private readonly userRepository: Repository<User>,
+
+        @InjectRepository(UserProgress)
+        private readonly userProgressRepository: Repository<UserProgress>
     ) {}
 
     /**
@@ -124,7 +128,16 @@ export class FormationService {
 
         const currentUser = await this.userRepository.findOne({where: {id: userId}})
 
-        console.log(currentUser)
-        return lesson
+        const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}})
+
+        
+
+        if(lessonInProgress){
+            console.log(lessonInProgress)
+            lessonInProgress.is_completed = true
+            await this.userProgressRepository.save(lessonInProgress)
+        } else if(!lessonInProgress){
+            throw new NotFoundException('lesson not found')
+        }
     }
 }

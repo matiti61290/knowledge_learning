@@ -9,9 +9,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { User } from '../entities/user.entity';
 import { LoginModule } from 'src/auth/login/login.module';
 import { AuthMiddleware } from 'src/middlewares/auth.middleware';
+import { UserProgress } from 'src/entities/userProgress.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Formation, Category, Lesson, User]), JwtModule, forwardRef(() => LoginModule)],
+    imports:[TypeOrmModule.forFeature([Formation, Category, Lesson, User, UserProgress]), JwtModule, forwardRef(() => LoginModule)],
     controllers: [FormationController],
     providers: [FormationService],
     exports: [FormationService]
