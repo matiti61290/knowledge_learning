@@ -120,7 +120,9 @@ export class FormationService {
         
         const lesson = await this.lessonRepository.findOne({where: {id: lessonId}})
 
-        const currentUser = user
+        const userId = user.id
+
+        const currentUser = await this.userRepository.findOne({where: {id: userId}})
 
         console.log(currentUser)
         return lesson
