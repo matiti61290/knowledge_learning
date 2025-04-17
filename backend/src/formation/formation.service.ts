@@ -121,15 +121,14 @@ export class FormationService {
 
     async validateLesson( user: any, lessonId: number) {
 
-        const lesson = await this.lessonRepository.findOne({where: {id: lessonId}})
         const userId = user.id
 
         if(!userId){
             throw new NotFoundException('User not found')
         }
 
-        const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}})
-        
+        const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}, relations:['formation']})
+
         if(!lessonInProgress) {
             throw new NotFoundException('Lesson in progress not found')
         }
@@ -140,9 +139,23 @@ export class FormationService {
             console.log('Vous avez deja completer cette lecon')
         }
 
-        // lessonInProgress.is_completed = true
-        // await this.userProgressRepository.save(lessonInProgress)
+        lessonInProgress.is_completed = true
+        await this.userProgressRepository.save(lessonInProgress)
 
-        return lessonInProgress
+        // check if certificate can be delivered
+
+        const formationInProgress = lessonInProgress.formation.id
+        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationInProgress}}})
+
+        console.log(lessonsInProgress)
+
+        for (const lessonInProgress of lessonsInProgress){
+            const isCompleted = lessonInProgress.is_completed
+            if(isCompleted === false){
+                console.log('Une lecon n\'est pas completees')
+                return
+            }
+        }
+        console.log('Toutes les lecons sont completees')
     }
 }
