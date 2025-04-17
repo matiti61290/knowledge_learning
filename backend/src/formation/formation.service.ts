@@ -120,24 +120,29 @@ export class FormationService {
     }
 
     async validateLesson( user: any, lessonId: number) {
-        console.log('le service est call')
-        
-        const lesson = await this.lessonRepository.findOne({where: {id: lessonId}})
 
+        const lesson = await this.lessonRepository.findOne({where: {id: lessonId}})
         const userId = user.id
 
-        const currentUser = await this.userRepository.findOne({where: {id: userId}})
+        if(!userId){
+            throw new NotFoundException('User not found')
+        }
 
         const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}})
-
         
-
-        if(lessonInProgress){
-            console.log(lessonInProgress)
-            lessonInProgress.is_completed = true
-            await this.userProgressRepository.save(lessonInProgress)
-        } else if(!lessonInProgress){
-            throw new NotFoundException('lesson not found')
+        if(!lessonInProgress) {
+            throw new NotFoundException('Lesson in progress not found')
         }
+
+        const lessonIsCompleted = lessonInProgress.is_completed
+
+        if (lessonIsCompleted === true) {
+            console.log('Vous avez deja completer cette lecon')
+        }
+
+        // lessonInProgress.is_completed = true
+        // await this.userProgressRepository.save(lessonInProgress)
+
+        return lessonInProgress
     }
 }
