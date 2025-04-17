@@ -227,7 +227,7 @@ export class PaymentService {
                 throw new ConflictException('One of these lessons is already bought')
             } else {
                 for(const lesson of lessons){
-                    const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false})
+                    const newLesson = this.userProgressRepository.create({user, lesson, is_completed: false, formation})
                     await this.userProgressRepository.save(newLesson)
                 }
         
@@ -236,20 +236,22 @@ export class PaymentService {
                 return this.purchaseRepository.save(purchase)
             }
         } else if (type === 'lesson') {
-            lesson = await this.lessonRepository.findOne({ where: {id: itemId}})
+            const lesson = await this.lessonRepository.findOne({ where: {id: itemId}, relations:['formation']})
             if(!lesson){
                 throw new NotFoundException('Lesson not found')
             }
+
+            const formation = lesson.formation
             
             const existingPurchace = await this.purchaseRepository.findOne({ where: {user: {id: user.id}, lesson: {id: lesson.id}}})
 
             if(existingPurchace){
                 throw new ConflictException('Lesson already bought')
             } else {
-                const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false})
+                const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false, formation})
                 await this.userProgressRepository.save(newLesson)
         
-                const purchase = await this.purchaseRepository.create({ user, lesson})
+                const purchase = await this.purchaseRepository.create({ user, lesson, formation})
                 await this.purchaseRepository.save(purchase)
             }
         }
