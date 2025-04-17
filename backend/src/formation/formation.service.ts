@@ -4,6 +4,8 @@ import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
+import { User } from '../entities/user.entity'
+import { UserProgress } from 'src/entities/userProgress.entity';
 
 /**
  * Gère la partie logique des formations
@@ -18,7 +20,13 @@ export class FormationService {
         private readonly categoryRepository: Repository<Category>,
 
         @InjectRepository(Lesson)
-        private readonly lessonRepository: Repository<Lesson>
+        private readonly lessonRepository: Repository<Lesson>,
+
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        @InjectRepository(UserProgress)
+        private readonly userProgressRepository: Repository<UserProgress>
     ) {}
 
     /**
@@ -109,5 +117,45 @@ export class FormationService {
         }
 
         return lesson
+    }
+
+    async validateLesson( user: any, lessonId: number) {
+
+        const userId = user.id
+
+        if(!userId){
+            throw new NotFoundException('User not found')
+        }
+
+        const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}, relations:['formation']})
+
+        if(!lessonInProgress) {
+            throw new NotFoundException('Lesson in progress not found')
+        }
+
+        const lessonIsCompleted = lessonInProgress.is_completed
+
+        if (lessonIsCompleted === true) {
+            console.log('Vous avez deja completer cette lecon')
+        }
+
+        lessonInProgress.is_completed = true
+        await this.userProgressRepository.save(lessonInProgress)
+
+        // check if certificate can be delivered
+
+        const formationInProgress = lessonInProgress.formation.id
+        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationInProgress}}})
+
+        console.log(lessonsInProgress)
+
+        for (const lessonInProgress of lessonsInProgress){
+            const isCompleted = lessonInProgress.is_completed
+            if(isCompleted === false){
+                console.log('Une lecon n\'est pas completees')
+                return
+            }
+        }
+        console.log('Toutes les lecons sont completees')
     }
 }

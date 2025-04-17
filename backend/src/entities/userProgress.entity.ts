@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Lesson } from "./lesson.entity";
+import { Formation } from "./formation.entity";
 
 @Entity()
 export class UserProgress {
@@ -15,6 +16,9 @@ export class UserProgress {
 
     @ManyToOne(()=> Lesson, (lesson)=> lesson.progresses)
     lesson: Lesson;
+
+    @ManyToOne(()=> Formation,(formation)=> formation.progresses)
+    formation: Formation
 
     @CreateDateColumn()
     created_at: Date

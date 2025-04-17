@@ -4,7 +4,6 @@ import { Formation } from 'src/entities/formation.entity';
 import { PaymentService } from './payment.service';
 import { PaymentController } from './payment.controller';
 import { Lesson } from 'src/entities/lesson.entity';
-import { RolesGuard } from 'src/auth/login/guards/roles.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { LoginModule } from 'src/auth/login/login.module';
 import { User } from 'src/entities/user.entity';

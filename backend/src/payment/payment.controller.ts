@@ -8,6 +8,9 @@ import * as dotenv from 'dotenv'
 import { Request, Response } from 'express';
 
 dotenv.config()
+/**
+ * Gère les routes pour le paiement
+ */
 @Controller('payment')
 export class PaymentController {
     private stripe: Stripe
@@ -21,19 +24,32 @@ export class PaymentController {
         this.stripe = new Stripe(secretKey)
     }
 
-
+    /**
+     * Route pour créer la session de paiement
+     * @param user - contient les informations de l'utilisateur
+     * @param type - Permet de définir si une formation ou une leçon est achetée
+     * @param id - Contient l'id de la formation ou leçon
+     * @returns une session de paiement Stripe
+     */
     @Post('create-checkout-session/:type/:id')
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
     async createCheckoutSession(
-    @User() user, @Param('type') type: string, @Param('id') id: number, @Query('token') token: string){
+    @User() user, @Param('type') type: string, @Param('id') id: number){
         if(type === 'formation'){
-            return this.paymentService.createCheckoutSessionFormation(id, user, type, token)
+            return this.paymentService.createCheckoutSessionFormation(id, user, type)
         } else if (type === 'lesson'){
             return this.paymentService.createCheckoutSessionLesson(id, user, type)
         }
     }
 
+    /**
+     * Route gérant l'envoie de requête pour le webhook Stripe confirmant le paiement et mettant à jour la base de données.
+     * @param req - Requête stripe envoyée au webhook
+     * @param res - Réponse stripe reçue du webhook
+     * @param signature - Générée au moment de valider l'achat. Contient les informations de la session de paiement tel que les metadatas
+     * @returns une mise à jour de la base de données si l'achat est bien confirmé.
+     */
     @Post('webhook')
     @HttpCode(HttpStatus.OK)
     async handleStripeWebhook(

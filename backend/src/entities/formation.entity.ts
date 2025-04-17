@@ -4,6 +4,7 @@ import { Category } from "./category.entity";
 import { Lesson } from "./lesson.entity";
 import { Purchase } from "./purchase.entity";
 import { UserCertification } from "./userCertification.entity";
+import { UserProgress } from "./userProgress.entity";
 
 @Entity()
 export class Formation{
@@ -24,6 +25,9 @@ export class Formation{
 
     @OneToMany(()=> Purchase, (purchase)=> purchase.formation)
     purchases: Purchase[];
+
+    @OneToMany(()=> UserProgress, (userProgress)=> userProgress.formation)
+    progresses: UserProgress[]
 
     @OneToMany(()=> UserCertification, (userCertification)=> userCertification.formation)
     certificates: UserCertification[]
