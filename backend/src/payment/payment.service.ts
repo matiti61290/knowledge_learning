@@ -257,9 +257,15 @@ export class PaymentService {
                 const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false, formation})
                 await this.userProgressRepository.save(newLesson)
 
-                const certificate = this.userCertification.create({user, formation, is_completed: false})
-                await this.userCertification.save(certificate)
-        
+                const formationId = formation.id
+                console.log("formation id = ", formationId)
+
+                const existingFormationCertification = await this.userCertification.findOne({ where: {user: {id: user.id}, formation:{id: formationId}}})
+                if(!existingFormationCertification){
+                    const formationCertification = await this.userCertification.create({user, formation, is_completed: false})
+                    await this.userCertification.save(formationCertification)
+                }
+
                 const purchase = await this.purchaseRepository.create({ user, lesson, formation})
                 await this.purchaseRepository.save(purchase)
             }

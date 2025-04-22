@@ -164,4 +164,8 @@ export class FormationService {
 
         //call de la methode pour valider la formation
     }
+
+    async validateCertification(formationId: number, user: any){
+        const formationCertification = await this.userCertification.findOne({where:{id: formationId}})
+    }
 }
