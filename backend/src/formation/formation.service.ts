@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
 import { UserProgress } from 'src/entities/userProgress.entity';
+import { UserCertification } from 'src/entities/userCertification.entity';
 
 /**
  * Gère la partie logique des formations
@@ -26,7 +27,10 @@ export class FormationService {
         private readonly userRepository: Repository<User>,
 
         @InjectRepository(UserProgress)
-        private readonly userProgressRepository: Repository<UserProgress>
+        private readonly userProgressRepository: Repository<UserProgress>,
+
+        @InjectRepository(UserCertification)
+        private readonly userCertification: Repository<UserCertification>
     ) {}
 
     /**
@@ -157,5 +161,7 @@ export class FormationService {
             }
         }
         console.log('Toutes les lecons sont completees')
+
+        //call de la methode pour valider la formation
     }
 }
