@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
 import { UserProgress } from 'src/entities/userProgress.entity';
+import { UserCertification } from 'src/entities/userCertification.entity';
 
 /**
  * Gère la partie logique des formations
@@ -26,7 +27,10 @@ export class FormationService {
         private readonly userRepository: Repository<User>,
 
         @InjectRepository(UserProgress)
-        private readonly userProgressRepository: Repository<UserProgress>
+        private readonly userProgressRepository: Repository<UserProgress>,
+
+        @InjectRepository(UserCertification)
+        private readonly userCertification: Repository<UserCertification>
     ) {}
 
     /**
@@ -143,13 +147,26 @@ export class FormationService {
         await this.userProgressRepository.save(lessonInProgress)
 
         // check if certificate can be delivered
+            // Find lessons in progress for the formation
+        const formationId = lessonInProgress.formation.id
+        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationId}}})
 
-        const formationInProgress = lessonInProgress.formation.id
-        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationInProgress}}})
+            // Find lessons of the formation
+        const lessonsInFormation: Lesson[] = await this.lessonRepository.find({where:{formation:{id:formationId}}, relations:['formation']})
+        console.log('lecons dans la formation:', lessonsInFormation)
 
-        console.log(lessonsInProgress)
+        console.log('lecon en cours:', lessonsInProgress)
+
+        const numberLessonsInFormation = lessonsInFormation.length
+        console.log('la longueur est de', numberLessonsInFormation)
+
+        const numberLessonsInProgressInFormation = lessonsInProgress.length
+        console.log('lessons in progress', numberLessonsInProgressInFormation)
 
         for (const lessonInProgress of lessonsInProgress){
+            if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
+                return "Vous n'avez pas achete toutes les lecons de la formation"
+            }
             const isCompleted = lessonInProgress.is_completed
             if(isCompleted === false){
                 console.log('Une lecon n\'est pas completees')
@@ -157,5 +174,47 @@ export class FormationService {
             }
         }
         console.log('Toutes les lecons sont completees')
+
+        //call de la methode pour valider la formation
+        this.validateCertification(formationId, user)
+    }
+
+
+
+
+    async validateCertification(formationId: number, user: any){
+        const formationCertification = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
+        
+        if(!formationCertification){
+            throw new NotFoundException("Il n'y a pas de certificat de validation pour cette formation")
+        }
+
+        formationCertification.is_completed = true
+        await this.userCertification.save(formationCertification)
+    }
+
+    async certification(formationId: number, user: any){
+        const formationCertified = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
+
+        if(!formationCertified){
+            throw new NotFoundException('Cette formation n\'a pas ete completee')
+        }
+
+        if (formationCertified.is_completed === false){
+            throw new InternalServerErrorException('La formation n\'est pas completee')
+        }
+        const currentUser = await this.userRepository.findOne({where: {id: user.id}})
+
+        if(!currentUser){
+            throw new NotFoundException('User not found')
+        }
+
+        const currentFormation = await this.formationRepository.findOne({where: {id: formationId}})
+
+        if(!currentFormation){
+            throw new NotFoundException("Formation not found")
+        }
+
+        return `Bravo ${currentUser.firstname}. Vous avez complete la formation ${currentFormation.name}.`
     }
 }

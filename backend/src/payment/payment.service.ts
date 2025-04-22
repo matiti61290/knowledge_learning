@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Purchase } from 'src/entities/purchase.entity';
 import { UserProgress } from 'src/entities/userProgress.entity';
+import { UserCertification } from 'src/entities/userCertification.entity';
 import * as dotenv from 'dotenv'
 
 dotenv.config()
@@ -30,6 +31,9 @@ export class PaymentService {
 
         @InjectRepository(UserProgress)
         private readonly userProgressRepository: Repository<UserProgress>,
+
+        @InjectRepository(UserCertification)
+        private readonly userCertification: Repository<UserCertification>
     ){
         const secretKey = process.env.STRIPE_SECRET
 
@@ -231,12 +235,14 @@ export class PaymentService {
                     await this.userProgressRepository.save(newLesson)
                 }
         
+                const certificate = await this.userCertification.create({user, formation, is_completed: false})
+                await this.userCertification.save(certificate)
+
                 const purchase = await this. purchaseRepository.create({ user, formation })
-                
                 return this.purchaseRepository.save(purchase)
             }
         } else if (type === 'lesson') {
-            const lesson = await this.lessonRepository.findOne({ where: {id: itemId}, relations:['formation']})
+            lesson = await this.lessonRepository.findOne({ where: {id: itemId}, relations:['formation']})
             if(!lesson){
                 throw new NotFoundException('Lesson not found')
             }
@@ -250,7 +256,16 @@ export class PaymentService {
             } else {
                 const newLesson = this.userProgressRepository.create({ user, lesson, is_completed: false, formation})
                 await this.userProgressRepository.save(newLesson)
-        
+
+                const formationId = formation.id
+                console.log("formation id = ", formationId)
+
+                const existingFormationCertification = await this.userCertification.findOne({ where: {user: {id: user.id}, formation:{id: formationId}}})
+                if(!existingFormationCertification){
+                    const formationCertification = await this.userCertification.create({user, formation, is_completed: false})
+                    await this.userCertification.save(formationCertification)
+                }
+
                 const purchase = await this.purchaseRepository.create({ user, lesson, formation})
                 await this.purchaseRepository.save(purchase)
             }
