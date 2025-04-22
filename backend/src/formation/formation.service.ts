@@ -147,13 +147,26 @@ export class FormationService {
         await this.userProgressRepository.save(lessonInProgress)
 
         // check if certificate can be delivered
-
+            // Find lessons in progress for the formation
         const formationId = lessonInProgress.formation.id
         const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationId}}})
 
-        console.log(lessonsInProgress)
+            // Find lessons of the formation
+        const lessonsInFormation: Lesson[] = await this.lessonRepository.find({where:{formation:{id:formationId}}, relations:['formation']})
+        console.log('lecons dans la formation:', lessonsInFormation)
+
+        console.log('lecon en cours:', lessonsInProgress)
+
+        const numberLessonsInFormation = lessonsInFormation.length
+        console.log('la longueur est de', numberLessonsInFormation)
+
+        const numberLessonsInProgressInFormation = lessonsInProgress.length
+        console.log('lessons in progress', numberLessonsInProgressInFormation)
 
         for (const lessonInProgress of lessonsInProgress){
+            if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
+                return "Vous n'avez pas achete toutes les lecons de la formation"
+            }
             const isCompleted = lessonInProgress.is_completed
             if(isCompleted === false){
                 console.log('Une lecon n\'est pas completees')
@@ -168,7 +181,7 @@ export class FormationService {
 
 
 
-    
+
     async validateCertification(formationId: number, user: any){
         const formationCertification = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
         

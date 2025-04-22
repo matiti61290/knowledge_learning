@@ -92,6 +92,4 @@ export class FormationController {
     ) {
         return this.formationService.validateLesson(user, lessonId)
     }
-
-
 }
