@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { Not, Repository } from 'typeorm';
@@ -200,6 +200,9 @@ export class FormationService {
             throw new NotFoundException('Cette formation n\'a pas ete completee')
         }
 
+        if (formationCertified.is_completed === false){
+            throw new InternalServerErrorException('La formation n\'est pas completee')
+        }
         const currentUser = await this.userRepository.findOne({where: {id: user.id}})
 
         if(!currentUser){
