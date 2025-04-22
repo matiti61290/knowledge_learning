@@ -25,6 +25,12 @@ export class FormationController {
         return this.formationService.findAll()
     }
 
+    /**
+     * Gère la route pour récupérer la certification d'une formation.
+     * @param user - Informations de l'utilisateur
+     * @param formationId - Identifiant de la formation
+     * @returns 
+     */
     @Get('/certification/:formationId')
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
@@ -83,6 +89,12 @@ export class FormationController {
         return this.formationService.findLessonById(formationId, lessonId)
     }
 
+    /**
+     * Gère la route pour valider une leçon.
+     * @param user - Informations de l'utilisateur
+     * @param lessonId - Identifiant de la leçon
+     * @returns - Retourne une mise à jour de la base de données si la validation est acceptée.
+     */
     @Post('/validate/:lessonId')
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')

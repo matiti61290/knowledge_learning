@@ -235,6 +235,7 @@ export class PaymentService {
                     await this.userProgressRepository.save(newLesson)
                 }
         
+                //Create a certificate in the userCertificate table
                 const certificate = await this.userCertification.create({user, formation, is_completed: false})
                 await this.userCertification.save(certificate)
 
@@ -260,6 +261,8 @@ export class PaymentService {
                 const formationId = formation.id
                 console.log("formation id = ", formationId)
 
+                //Create a certificate in the userCertificate table and check if one with the same formation id already exists.
+                // Avoid multiple lines for the same formation
                 const existingFormationCertification = await this.userCertification.findOne({ where: {user: {id: user.id}, formation:{id: formationId}}})
                 if(!existingFormationCertification){
                     const formationCertification = await this.userCertification.create({user, formation, is_completed: false})
