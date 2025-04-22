@@ -123,6 +123,11 @@ export class FormationService {
         return lesson
     }
 
+    /**
+     * Methode pour valider une lecon et verifier si toutes les lecons d'une formation ont ete completees
+     * @param user - information de l'utilisateur qui a achete la formation
+     * @param lessonId - Id de la lecon pour la retrouver en base de donnee
+     */
     async validateLesson( user: any, lessonId: number) {
 
         const userId = user.id
@@ -161,21 +166,22 @@ export class FormationService {
         //Check if user bought each lesson of a formation, and if each lesson is completed
         for (const lessonInProgress of lessonsInProgress){
             if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
-                return "Vous n'avez pas achete toutes les lecons de la formation"
+                throw new InternalServerErrorException('You didn\'t buy each lessons of the formation')
             }
             const isCompleted = lessonInProgress.is_completed
             if(isCompleted === false){
                 throw new InternalServerErrorException('One of the lessons isn\'t completed')
-                return
             }
         }
         //call the method to validate the certification
         this.validateCertification(formationId, user)
     }
 
-
-
-
+    /**
+     * Méthode pour valider la certification si toutes les leçons ont été complétées
+     * @param formationId - Identifiant de la formation pour la retrouver en base de données
+     * @param user - Informations de l'utilisateur
+     */
     async validateCertification(formationId: number, user: any){
         const formationCertification = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
         
@@ -187,6 +193,12 @@ export class FormationService {
         await this.userCertification.save(formationCertification)
     }
 
+    /**
+     * Récupère les données de l'utilisateur et de la formation si la formation a été complétée.
+     * @param formationId - Identifiant de la formation pour la retrouver en base de données
+     * @param user - Informations de l'utilisateur
+     * @returns - retourne les informations de la formation et de l'utilisateur
+     */
     async certification(formationId: number, user: any){
         const formationCertified = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
 
