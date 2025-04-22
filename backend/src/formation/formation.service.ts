@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
@@ -148,8 +148,8 @@ export class FormationService {
 
         // check if certificate can be delivered
 
-        const formationInProgress = lessonInProgress.formation.id
-        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationInProgress}}})
+        const formationId = lessonInProgress.formation.id
+        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationId}}})
 
         console.log(lessonsInProgress)
 
@@ -163,9 +163,17 @@ export class FormationService {
         console.log('Toutes les lecons sont completees')
 
         //call de la methode pour valider la formation
+        this.validateCertification(formationId, user)
     }
 
     async validateCertification(formationId: number, user: any){
-        const formationCertification = await this.userCertification.findOne({where:{id: formationId}})
+        const formationCertification = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
+        
+        if(!formationCertification){
+            throw new NotFoundException("Il n'y a pas de certificat de validation pour cette formation")
+        }
+
+        formationCertification.is_completed = true
+        await this.userCertification.save(formationCertification)
     }
 }
