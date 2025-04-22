@@ -25,6 +25,16 @@ export class FormationController {
         return this.formationService.findAll()
     }
 
+    @Get('/certification/:formationId')
+    @UseGuards(RolesGuard)
+    @Roles('student', 'admin')
+    async certificate(
+        @User() user,
+        @Param('formationId', ParseIntPipe) formationId: number
+    ){
+        return this.formationService.certification(formationId, user)
+    }
+
     /**
      * Gère la route pour récupérer les formation pour une catégorie choisie
      * @param categoryId - Id de la catégorie choisie
@@ -82,4 +92,6 @@ export class FormationController {
     ) {
         return this.formationService.validateLesson(user, lessonId)
     }
+
+
 }

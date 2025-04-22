@@ -166,6 +166,9 @@ export class FormationService {
         this.validateCertification(formationId, user)
     }
 
+
+
+    
     async validateCertification(formationId: number, user: any){
         const formationCertification = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
         
@@ -175,5 +178,27 @@ export class FormationService {
 
         formationCertification.is_completed = true
         await this.userCertification.save(formationCertification)
+    }
+
+    async certification(formationId: number, user: any){
+        const formationCertified = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
+
+        if(!formationCertified){
+            throw new NotFoundException('Cette formation n\'a pas ete completee')
+        }
+
+        const currentUser = await this.userRepository.findOne({where: {id: user.id}})
+
+        if(!currentUser){
+            throw new NotFoundException('User not found')
+        }
+
+        const currentFormation = await this.formationRepository.findOne({where: {id: formationId}})
+
+        if(!currentFormation){
+            throw new NotFoundException("Formation not found")
+        }
+
+        return `Bravo ${currentUser.firstname}. Vous avez complete la formation ${currentFormation.name}.`
     }
 }
