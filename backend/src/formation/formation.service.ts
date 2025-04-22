@@ -140,42 +140,36 @@ export class FormationService {
         const lessonIsCompleted = lessonInProgress.is_completed
 
         if (lessonIsCompleted === true) {
-            console.log('Vous avez deja completer cette lecon')
+            throw new InternalServerErrorException('You already completed this lesson')
         }
 
         lessonInProgress.is_completed = true
         await this.userProgressRepository.save(lessonInProgress)
 
-        // check if certificate can be delivered
+        // check if certification can be delivered
             // Find lessons in progress for the formation
         const formationId = lessonInProgress.formation.id
         const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationId}}})
 
             // Find lessons of the formation
         const lessonsInFormation: Lesson[] = await this.lessonRepository.find({where:{formation:{id:formationId}}, relations:['formation']})
-        console.log('lecons dans la formation:', lessonsInFormation)
-
-        console.log('lecon en cours:', lessonsInProgress)
 
         const numberLessonsInFormation = lessonsInFormation.length
-        console.log('la longueur est de', numberLessonsInFormation)
 
         const numberLessonsInProgressInFormation = lessonsInProgress.length
-        console.log('lessons in progress', numberLessonsInProgressInFormation)
 
+        //Check if user bought each lesson of a formation, and if each lesson is completed
         for (const lessonInProgress of lessonsInProgress){
             if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
                 return "Vous n'avez pas achete toutes les lecons de la formation"
             }
             const isCompleted = lessonInProgress.is_completed
             if(isCompleted === false){
-                console.log('Une lecon n\'est pas completees')
+                throw new InternalServerErrorException('One of the lessons isn\'t completed')
                 return
             }
         }
-        console.log('Toutes les lecons sont completees')
-
-        //call de la methode pour valider la formation
+        //call the method to validate the certification
         this.validateCertification(formationId, user)
     }
 
@@ -215,6 +209,7 @@ export class FormationService {
             throw new NotFoundException("Formation not found")
         }
 
+        //replace by data when front will be added
         return `Bravo ${currentUser.firstname}. Vous avez complete la formation ${currentFormation.name}.`
     }
 }
