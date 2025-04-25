@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Param, UseGuards, Query, NotFoundException, HttpCode, HttpStatus, Req, Res, Headers, BadRequestException } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { RolesGuard } from 'src/auth/login/guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { User } from 'src/decorators/user.decorator';
+import { RolesGuard } from '../auth/login/guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { User } from '../decorators/user.decorator';
 import { Stripe } from 'stripe'
 import * as dotenv from 'dotenv'
 import { Request, Response } from 'express';
