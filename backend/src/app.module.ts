@@ -13,6 +13,8 @@ import { ForgotPasswordModule } from './auth/forgot-password/forgot-password.mod
 import { FormationController } from './formation/formation.controller';
 import { FormationModule } from './formation/formation.module';
 import { PaymentModule } from './payment/payment.module';
+import { CsrfModule } from './csrf/csrf.module';
+import { CsrfController } from './csrf/csrf.controller';
 
 
 
@@ -27,9 +29,10 @@ import { PaymentModule } from './payment/payment.module';
     LoginModule,
     ForgotPasswordModule,
     FormationModule,
-    PaymentModule
+    PaymentModule,
+    CsrfModule
   ],
-  controllers: [AppController, UserController, RegisterController, FormationController],
+  controllers: [AppController, UserController, RegisterController, FormationController, CsrfController],
   providers: [AppService],
 })
 export class AppModule {}
