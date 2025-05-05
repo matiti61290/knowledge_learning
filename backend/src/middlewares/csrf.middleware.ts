@@ -1,12 +1,13 @@
-// csrf.middleware.ts
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { doubleCsrf } from 'csrf-csrf';
+ 
 
 const {
   doubleCsrfProtection,
+  generateCsrfToken
 } = doubleCsrf({
-  getSecret: () => 'une cle',
+  getSecret: () => 'une cle', // mettre une vraie cle
   getSessionIdentifier: (req: Request) => {
     return req.cookies['session-id'] || 'anonymous';
   },
@@ -14,7 +15,7 @@ const {
   cookieOptions: {
     sameSite: 'strict',
     path: '/',
-    secure: false, //True pour mise en prod
+    secure: false //Pensez a mettre TRUE en prod
   },
 });
 
@@ -29,3 +30,5 @@ export class CsrfMiddleware implements NestMiddleware {
     });
   }
 }
+
+export { generateCsrfToken };
