@@ -6,12 +6,18 @@ import { Category } from '../entities/category.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { Lesson } from '../entities/lesson.entity';
+import { User } from '../entities/user.entity'
+import { UserProgress } from '../entities/userProgress.entity';
+import {UserCertification} from '../entities/userCertification.entity'
 
 describe('FormationService', () => {
   let formationService: FormationService;
   let formationRepository: Repository<Formation>
   let categoryRepository: Repository<Category>
   let lessonRepository: Repository<Lesson>
+  let userRepository: Repository<User>
+  let userProgressRepository: Repository<UserProgress>
+  let userCertificationRepository: Repository<UserCertification>
 
   beforeEach(async () => {
 
@@ -29,6 +35,20 @@ describe('FormationService', () => {
       find: jest.fn()
     }
 
+    const mockUserRepository = {
+      findOne: jest.fn()
+    }
+
+    const mockUserProgressRepository = {
+      findOne: jest.fn(),
+      save: jest.fn()
+    }
+
+    const mockUserCertificationRepository = {
+      findOne: jest.fn(),
+      save: jest.fn()
+    }
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FormationService,
@@ -43,6 +63,18 @@ describe('FormationService', () => {
         {
           provide: getRepositoryToken(Lesson),
           useValue: mockLessonRepository
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository
+        },
+        {
+          provide: getRepositoryToken(UserProgress),
+          useValue: mockUserProgressRepository
+        },
+        {
+          provide: getRepositoryToken(UserCertification),
+          useValue: mockUserCertificationRepository
         }
       ]
     }).compile()
@@ -51,6 +83,9 @@ describe('FormationService', () => {
     formationRepository = module.get<Repository<Formation>>(getRepositoryToken(Formation))
     categoryRepository = module.get<Repository<Category>>(getRepositoryToken(Category))
     lessonRepository = module.get<Repository<Lesson>>(getRepositoryToken(Lesson))
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User))
+    userProgressRepository = module.get<Repository<UserProgress>>(getRepositoryToken(UserProgress))
+    userCertificationRepository = module.get<Repository<UserCertification>>(getRepositoryToken(UserCertification))
   });
 
   describe('findAll method', ()=> {

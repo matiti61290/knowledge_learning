@@ -4,10 +4,10 @@ import { Formation } from '../entities/formation.entity';
 import { Lesson } from '../entities/lesson.entity'
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
-import { Purchase } from 'src/entities/purchase.entity';
-import { UserProgress } from 'src/entities/userProgress.entity';
-import { UserCertification } from 'src/entities/userCertification.entity';
+import { User } from '../entities/user.entity';
+import { Purchase } from '../entities/purchase.entity';
+import { UserProgress } from '../entities/userProgress.entity';
+import { UserCertification } from '../entities/userCertification.entity';
 import * as dotenv from 'dotenv'
 
 dotenv.config()
@@ -259,7 +259,6 @@ export class PaymentService {
                 await this.userProgressRepository.save(newLesson)
 
                 const formationId = formation.id
-                console.log("formation id = ", formationId)
 
                 //Create a certificate in the userCertificate table and check if one with the same formation id already exists.
                 // Avoid multiple lines for the same formation

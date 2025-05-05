@@ -5,8 +5,8 @@ import { Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
-import { UserProgress } from 'src/entities/userProgress.entity';
-import { UserCertification } from 'src/entities/userCertification.entity';
+import { UserProgress } from '../entities/userProgress.entity';
+import { UserCertification } from '../entities/userCertification.entity';
 
 /**
  * Gère la partie logique des formations

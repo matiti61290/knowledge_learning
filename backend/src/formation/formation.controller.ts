@@ -1,10 +1,10 @@
 import { Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
-import { Formation } from 'src/entities/formation.entity';
+import { Formation } from '../entities/formation.entity';
 import { FormationService } from './formation.service';
-import { Lesson } from 'src/entities/lesson.entity';
-import { User } from 'src/decorators/user.decorator';
-import { RolesGuard } from 'src/auth/login/guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
+import { Lesson } from '../entities/lesson.entity';
+import { User } from '../decorators/user.decorator';
+import { RolesGuard } from '../auth/login/guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
 
 /**
  * Gère les routes pour les formations

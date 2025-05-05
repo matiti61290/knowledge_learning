@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { Formation } from '../entities/formation.entity';
 import { Category } from 'src/entities/category.entity';
 import { Lesson } from 'src/entities/lesson.entity';
+import { RolesGuard } from '../auth/login/guards/roles.guard';
+import { ExecutionContext } from '@nestjs/common';
+
 
 describe('FormationController', () => {
   let formationController: FormationController;
@@ -22,8 +25,12 @@ describe('FormationController', () => {
           findLessonsByFormation: jest.fn(),
           findLessonById: jest.fn()
         }
-      }]
-    }).compile()
+      },
+    ]
+    }).overrideGuard(RolesGuard).useValue({canActivate:(context: ExecutionContext) => {
+      const req = context.switchToHttp().getRequest()
+      req.user = { userId: 1, email: 'test@example.com'}
+    }}).compile()
 
     formationController = module.get<FormationController>(FormationController)
     formationService = module.get<FormationService>(FormationService)
