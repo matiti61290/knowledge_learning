@@ -100,9 +100,46 @@ describe('PaymentService', () => {
       mockStripe.checkout.sessions.create.mockResolvedValueOnce({id: 'sess_123'})
 
       const session = await paymentService.createCheckoutSessionFormation(1, {id:2}, 'formation')
-      console.log(session)
       expect(session).toHaveProperty('id')
       expect(session.id).toBeDefined()
+    })
+  })
+
+  describe('create-purchase', () => {
+    it('should return a user not found', async () => {
+      const mockUserId = 1
+      const mockType = "formation"
+      const mockFormationId = 1
+      
+      jest.spyOn(userRepository, "findOne").mockResolvedValueOnce(null)
+
+      await expect(paymentService.createPurchase(mockUserId, mockType, mockFormationId)).rejects.toThrow(NotFoundException)
+    })
+
+    it('should return a formation not found', async () => {
+      const mockUserId = 1
+      const mockType = "formation"
+      const mockFormationId = 1
+
+      const mockUser: Partial<User> = {id: 1, firstname:"John", lastname:"Doe"}
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(mockUser as User)
+      jest.spyOn(formationRepository, 'findOne').mockResolvedValueOnce(null)
+      
+      await expect(paymentService.createPurchase(mockUserId, mockType, mockFormationId)).rejects.toThrow(NotFoundException)
+    })
+
+    it('should return a formation not found', async () => {
+      const mockUserId = 1
+      const mockType = "lesson"
+      const mockLessonId = 1
+
+      const mockUser: Partial<User> = {id: 1, firstname:"John", lastname:"Doe"}
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(mockUser as User)
+      jest.spyOn(lessonRepository, 'findOne').mockResolvedValueOnce(null)
+      
+      await expect(paymentService.createPurchase(mockUserId, mockType, mockLessonId)).rejects.toThrow(NotFoundException)
     })
   })
 });
