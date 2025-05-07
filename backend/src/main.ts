@@ -16,7 +16,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), { cors: false});
 
   app.use(cookieParser())
-  app.use(new CsrfMiddleware().use)
+  // app.use(new CsrfMiddleware().use)
 
   await app.init()
   await app.listen(process.env.PORT || 3000);

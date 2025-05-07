@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,6 +15,7 @@ import { FormationModule } from './formation/formation.module';
 import { PaymentModule } from './payment/payment.module';
 import { CsrfModule } from './csrf/csrf.module';
 import { CsrfController } from './csrf/csrf.controller';
+import { CsrfMiddleware } from './middlewares/csrf.middleware';
 
 
 
@@ -35,4 +36,13 @@ import { CsrfController } from './csrf/csrf.controller';
   controllers: [AppController, UserController, RegisterController, FormationController, CsrfController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CsrfMiddleware)
+    .exclude(
+      {path : 'csrf/token', method: RequestMethod.GET},
+      {path: 'formations/', method:RequestMethod.GET},
+      {path: 'login', method: RequestMethod.POST}
+    ).forRoutes('*')
+  }
+}
