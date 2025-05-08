@@ -26,13 +26,12 @@ export class RolesGuard implements CanActivate{
         }
 
         const request = context.switchToHttp().getRequest<Request>()
-        const authHeader = request.headers.authorization
 
-        if(!authHeader) {
+        const token = request.cookies?.access_token
+
+        if(!token) {
             throw new ForbiddenException('Aucun token fourni')
         }
-
-        const token = authHeader.split(' ')[1]
 
         try{
             const decoded = this.jwtService.verify(token)

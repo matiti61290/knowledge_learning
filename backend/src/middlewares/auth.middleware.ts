@@ -9,20 +9,18 @@ export class AuthMiddleware implements NestMiddleware {
     ) {}
 
     use(req: Request, res: Response, next: NextFunction) {
-        const authHeader = req.headers.authorization
-
-        if(!authHeader){
-            throw new ForbiddenException('Aucun token fourni')
+        const token = req.cookies?.access_token;
+    
+        if (!token) {
+            throw new ForbiddenException('Aucun token fourni');
         }
-
-        const token = authHeader.split(' ')[1]
-
-        try{
-            const decoded = this.jwtService.verify(token)
-            req.user = decoded
-            next()
+    
+        try {
+            const decoded = this.jwtService.verify(token);
+            req.user = decoded;
+            next();
         } catch (error) {
-            throw new ForbiddenException('Token invalide')
+            throw new ForbiddenException('Token invalide');
         }
     }
 }
