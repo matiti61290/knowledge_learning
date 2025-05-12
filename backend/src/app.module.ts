@@ -42,7 +42,9 @@ export class AppModule implements NestModule {
     .exclude(
       {path : 'csrf/token', method: RequestMethod.GET},
       {path: 'formations/', method:RequestMethod.GET},
-      {path: 'login', method: RequestMethod.POST}
+      {path: 'login', method: RequestMethod.POST},
+      {path: 'formations/category/:categoryId', method: RequestMethod.GET},
+      {path: 'formations/:formationId', method: RequestMethod.GET}
     ).forRoutes('*')
   }
 }
