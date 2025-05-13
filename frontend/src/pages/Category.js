@@ -23,9 +23,15 @@ function Category() {
     return (
         <div>
             <h2>Les formations</h2>
-                {formationsByCategory.map((formation) => (
-                    <FormationCard key={formation.id} formation={formation} />
-                ))}
+            <div className="container">
+                <div className="row d-flex justify-content-center">
+                    {formationsByCategory.map((formation) => (
+                        <div className="col-12 col-lg-4 col-md-6 my-5">
+                            <FormationCard key={formation.id} formation={formation} />
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }
