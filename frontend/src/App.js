@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Header from './component/Header.js'
+import Footer from "./component/Footer.js";
 import Login from "./pages/Login"
 import Home from "./pages/Home"
 import Formations from "./pages/Formations";
@@ -18,6 +19,7 @@ function App() {
       <Route path="/formations/:formationId" element={<Formation />} />
       <Route path="/category/:categoryId" element={<Category />} />
     </Routes>
+    <Footer />
   </div>
  )
 }

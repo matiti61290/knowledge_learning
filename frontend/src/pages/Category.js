@@ -24,7 +24,7 @@ function Category() {
         <div>
             <h2>Les formations</h2>
                 {formationsByCategory.map((formation) => (
-                        <FormationCard key={formation.id} formation={formation} />
+                    <FormationCard key={formation.id} formation={formation} />
                 ))}
         </div>
     );
