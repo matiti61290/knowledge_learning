@@ -17,9 +17,16 @@ function Formations () {
     return (
         <div>
             <h2>Formations</h2>
-                {formations.map((formation) => (
-                    <FormationCard key={formation.id} formation={formation} />
-                ))}
+            <div className="container">
+                <div className="row">
+                    {formations.map((formation) => (
+                        <div className="col-12 col-lg-4 col-md-6 my-5">
+                            <FormationCard key={formation.id} formation={formation} />
+                        </div>
+                    ))}
+                </div>
+                
+            </div>
         </div>
     )
 }

@@ -3,9 +3,9 @@ import Navbar from "./Navbar";
 
 function Header() {
     return(
-        <div className="border-bottom border-warning">
+        <header className="border-bottom border-secondary border-1 bg-light">
             <Navbar />
-        </div>
+        </header>
     )
 }
 
