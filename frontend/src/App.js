@@ -10,15 +10,17 @@ import Category from "./pages/Category.js"
 
 function App() {
  return (
-  <div>
+  <div className="d-flex flex-column min-vh-100">
     <Header />
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path='/login' element={<Login />} />
-      <Route path='/formations' element={<Formations />}/>
-      <Route path="/formations/:formationId" element={<Formation />} />
-      <Route path="/category/:categoryId" element={<Category />} />
+    <main className="flex-grow-1">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/formations' element={<Formations />}/>
+        <Route path="/formations/:formationId" element={<Formation />} />
+        <Route path="/category/:categoryId" element={<Category />} />
     </Routes>
+    </main>
     <Footer />
   </div>
  )
