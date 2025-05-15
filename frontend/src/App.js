@@ -7,6 +7,7 @@ import Home from "./pages/Home"
 import Formations from "./pages/Formations";
 import Formation from "./pages/Formation"
 import Category from "./pages/Category.js"
+import Lesson from './pages/Lesson.js'
 
 function App() {
  return (
@@ -19,6 +20,7 @@ function App() {
         <Route path='/formations' element={<Formations />}/>
         <Route path="/formations/:formationId" element={<Formation />} />
         <Route path="/category/:categoryId" element={<Category />} />
+        <Route path="/formations/:formationId/:lessonId" element={<Lesson />} />
     </Routes>
     </main>
     <Footer />
