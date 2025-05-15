@@ -40,12 +40,17 @@ function Formation() {
     }
 
     return (
-        <div>
-            <h3>{formation.name}</h3>
-            {lessons.map((lesson) => (
-                <LessonCard key={lesson.id} lesson={lesson} formationId={formationId} />
-            ))}
+        <div className="container">
+            <div className="row">
+                <h2>{formation.name}</h2>
+                {lessons.map((lesson) => (
+                    <div className="col-12 col-lg-6 my-5">
+                        <LessonCard key={lesson.id} lesson={lesson} formationId={formationId} />
+                    </div>
+                ))}
+            </div>
         </div>
+
     );
 }
 
