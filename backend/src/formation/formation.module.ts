@@ -20,7 +20,7 @@ import { UserCertification } from 'src/entities/userCertification.entity';
 })
 export class FormationModule implements NestModule{
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthMiddleware).exclude('formations', 'formations/category/:categoryId', 'formations/:formationId', 'formations/:formationId/lessons','/:formationId/:lessonId')
+        consumer.apply(AuthMiddleware).exclude('formations', 'formations/category/:categoryId', 'formations/:formationId', 'formations/:formationId/lessons','formations/:formationId/:lessonId')
         .forRoutes(FormationController)
     }
 }
