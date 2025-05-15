@@ -1,28 +1,52 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import LessonCard from "../component/LessonCard";
 
 function Formation() {
-    const { formationId } = useParams()
-    const [formation, setFormation] = useState()
+    const { formationId } = useParams();
+    const [formation, setFormation] = useState(null);
+    const [lessons, setLessons] = useState([])
 
     useEffect(() => {
         fetch(`http://localhost:3001/formations/${formationId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur réseau");
+                }
+                return response.json();
+            })
+            .then(data => setFormation(data))
+            .catch(error => {
+                console.error("Erreur API:", error);
+            });
+    }, [formationId]);
+
+    useEffect(() => {
+        fetch(`http://localhost:3001/formations/${formationId}/lessons`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Erreur reseau")
             }
             return response.json()
-        }).then(data => {
-            setFormation(data)
         })
-        .catch(error => console.error("Erreur API:", error))
+        .then(data => setLessons(data))
+        .catch(error => {
+            console.error("Erreur API:", error)
+        })
     }, [formationId])
 
-    console.log(formation)
+    if (!formation) {
+        return <div>Chargement...</div>;
+    }
 
-    return(
-        <h1>{formation.name}</h1>
-    )
+    return (
+        <div>
+            <h3>{formation.name}</h3>
+            {lessons.map((lesson) => (
+                <LessonCard key={lesson.id} lesson={lesson} formationId={formationId} />
+            ))}
+        </div>
+    );
 }
 
-export default Formation
+export default Formation;
