@@ -32,19 +32,22 @@ function Login () {
     }
     
     return (
-      <form onSubmit={handleSubmit}>
-        <h2>Connexion</h2>
-        <div>
-          <label>Email: </label>
-          <input type="mail" value={mail} onChange={(e) => setMail(e.target.value)} required />
-        </div>
-        <div>
-          <label>Mot de passe: </label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div>
-        <button type="submit">Se connecter</button>
-        <p>{message}</p>
+      <div className="container d-flex justify-content-center mt-5 py-2 border" style={{width: 40 + 'em' }}>
+        <form onSubmit={handleSubmit}>
+          <h2>Connexion</h2>
+          <div className="d-flex flex-column my-3">
+            <label>Email: </label>
+            <input type="mail" value={mail} onChange={(e) => setMail(e.target.value)} required />
+          </div>
+          <div className="d-flex flex-column my-3">
+            <label>Mot de passe: </label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
+          <button className="btn btn-secondary" type="submit">Se connecter</button>
+          <p className="mt-3">{message}</p>
       </form>
+      </div>
+
     )
 }
 
