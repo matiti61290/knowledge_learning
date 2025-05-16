@@ -85,7 +85,7 @@ function Navbar() {
                         <a className="nav-link" href="/login">Me connecter</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">M'inscrire</a>
+                        <a className="nav-link" href="/register">M'inscrire</a>
                     </li>
                 </ul>
             </div>

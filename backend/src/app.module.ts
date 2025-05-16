@@ -43,6 +43,7 @@ export class AppModule implements NestModule {
       {path : 'csrf/token', method: RequestMethod.GET},
       {path: 'formations/', method:RequestMethod.GET},
       {path: 'login', method: RequestMethod.POST},
+      {path: 'register', method: RequestMethod.POST},
       {path: 'formations/category/:categoryId', method: RequestMethod.GET},
       {path: 'formations/:formationId', method: RequestMethod.GET}
     ).forRoutes('*')
