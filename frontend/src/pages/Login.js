@@ -18,7 +18,7 @@ function Login () {
           body: JSON.stringify({mail, password})
         });
     
-        if( response.ok) {
+        if(response.ok) {
           const data = await response.json()
           setMessage(`Bienvenue ${data.username || 'utilisateur'} ! le login fonctionne!`)
         } else {

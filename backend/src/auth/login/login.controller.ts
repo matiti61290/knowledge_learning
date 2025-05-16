@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Get, Post, Req,  Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { LoginService } from './login.service';
 import { LoginUserDto } from '../../dto/login-user.dto';
 
@@ -32,7 +32,13 @@ export class LoginController {
                 maxAge: 1000*60*60*24
             })
 
-        return {message: 'Connexion reussi'}
+        return {access_token}
 
+    }
+
+    @Get('/logged')
+    loggedUser(@Req() req: Request) {
+        console.log(req.user)
+        return req.user
     }
 }
