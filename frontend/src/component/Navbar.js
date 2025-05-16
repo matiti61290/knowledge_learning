@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 function Navbar() {
     const [collapsedMenu, setCollapsedMenu] = useState(false)
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [isLogged, setIsLogged] = useState(false)
     const menuRef = useRef(null)
     const dropdownRef = useRef(null); 
 
@@ -13,6 +14,41 @@ function Navbar() {
     const toggleDropdown = () => {
         setDropdownOpen(prev => !prev);
     };
+
+   useEffect(() => {
+        const checkLogged = async () => {
+            try {
+                const csrfRes = await fetch("http://localhost:3001/csrf/token", {
+                    credentials: "include"
+                })
+                const csrfData = await csrfRes.json()
+                const csrfToken = csrfData.csrfToken
+
+                const loggedRes = await fetch("http://localhost:3001/login/logged", {
+                    method: "GET",
+                    credentials: "include",
+                    headers: {
+                        'csrf-token' : csrfToken
+                    }
+                })
+
+                if (loggedRes.ok) {
+                    const data = await loggedRes.json()
+                    setIsLogged(true)
+                    console.log(data)
+                    return data
+                } else {
+                    setIsLogged(false)
+                }
+            }catch (error) {
+                console.error("erreur lors de la connexion")
+                setIsLogged(false)
+            }
+        }
+
+        checkLogged()
+        
+    }, [])
 
     //Close the collapsed menu is click outside
     useEffect(() => {
@@ -81,12 +117,19 @@ function Navbar() {
                             <a className="dropdown-item" href="/category/4">Cuisine</a>
                         </div>
                     </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="/login">Me connecter</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">M'inscrire</a>
-                    </li>
+                    {isLogged ? (
+                        <p>vous etes connecte</p>
+                    ): (
+                        <>
+                            <li className="nav-item">
+                                <a className="nav-link" href="/login">Me connecter</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="/register">M'inscrire</a>
+                            </li>
+                        </>
+                    )}
+
                 </ul>
             </div>
         </nav>

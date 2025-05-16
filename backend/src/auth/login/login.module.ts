@@ -1,4 +1,4 @@
-import { Module} from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod} from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
@@ -8,6 +8,7 @@ import { Role } from 'src/entities/role.entity';
 import * as dotenv from 'dotenv'
 import { RolesGuard } from './guards/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 
 dotenv.config()
 @Module({
@@ -23,4 +24,10 @@ dotenv.config()
     }],
     exports: [LoginService, JwtModule]
 })
-export class LoginModule {}
+export class LoginModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(AuthMiddleware).exclude(
+        {path: 'login', method: RequestMethod.POST})
+        .forRoutes('login/logged')
+    }
+}
