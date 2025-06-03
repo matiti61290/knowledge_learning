@@ -14,7 +14,7 @@ export class UserController {
         private readonly userService: UserService
     ) {}
 
-    @Get('/')
+    @Get('')
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
     getUser(@CurrentUser() user: User) {
