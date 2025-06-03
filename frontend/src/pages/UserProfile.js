@@ -11,8 +11,15 @@ function UserProfile() {
         .then(data => setUser(data))
         .catch(error => console.error('Erreur API :', error ))
     }, [])
+    console.log(user)
 
-    return <h1>{user.mail}</h1>
+    return(
+        <div>
+            <h1>La page marche</h1>
+            <h2> et on a meme le mail: {user.mail}</h2>
+        </div>
+    )
+
 }
 
 export default UserProfile
