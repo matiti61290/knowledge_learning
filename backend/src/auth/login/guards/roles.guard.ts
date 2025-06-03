@@ -41,6 +41,8 @@ export class RolesGuard implements CanActivate{
                 throw new ForbiddenException("Vous n'avez pas acces a cette route")
             }
 
+            request.user = decoded
+
             return true
         } catch(error) {
             throw new ForbiddenException('Token invalide')

@@ -1,9 +1,11 @@
 import React, {useState} from "react"
+import { useNavigate } from "react-router-dom"
 
 function Login () {
     const [mail, setMail] = useState('')
     const [password, setPassword] = useState('')
     const [message, setMessage] = useState('')
+    const navigate = useNavigate()
     
     const handleSubmit = async (e) => {
       e.preventDefault()
@@ -21,6 +23,7 @@ function Login () {
         if(response.ok) {
           const data = await response.json()
           setMessage(`Bienvenue ${data.username || 'utilisateur'} ! le login fonctionne!`)
+          navigate('/')
         } else {
           const errorData = await response.json()
           setMessage(errorData.message || 'Erreur de connexion')

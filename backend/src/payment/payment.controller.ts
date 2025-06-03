@@ -2,7 +2,7 @@ import { Controller, Post, Get, Param, UseGuards, Query, NotFoundException, Http
 import { PaymentService } from './payment.service';
 import { RolesGuard } from '../auth/login/guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
-import { User } from '../decorators/user.decorator';
+import { CurrentUser } from '../decorators/user.decorator';
 import { Stripe } from 'stripe'
 import * as dotenv from 'dotenv'
 import { Request, Response } from 'express';
@@ -35,7 +35,7 @@ export class PaymentController {
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
     async createCheckoutSession(
-    @User() user, @Param('type') type: string, @Param('id') id: number){
+    @CurrentUser() user, @Param('type') type: string, @Param('id') id: number){
         if(type === 'formation'){
             return this.paymentService.createCheckoutSessionFormation(id, user, type)
         } else if (type === 'lesson'){
