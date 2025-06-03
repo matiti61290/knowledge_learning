@@ -118,7 +118,7 @@ function Navbar() {
                         </div>
                     </li>
                     {isLogged ? (
-                        <p>vous etes connecte</p>
+                        <a className="nav-link" href="/userProfile">Mon profil</a>
                     ): (
                         <>
                             <li className="nav-item">

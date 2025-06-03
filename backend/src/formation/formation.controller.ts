@@ -2,7 +2,7 @@ import { Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/c
 import { Formation } from '../entities/formation.entity';
 import { FormationService } from './formation.service';
 import { Lesson } from '../entities/lesson.entity';
-import { User } from '../decorators/user.decorator';
+import { CurrentUser } from '../decorators/user.decorator';
 import { RolesGuard } from '../auth/login/guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 
@@ -35,7 +35,7 @@ export class FormationController {
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
     async certificate(
-        @User() user,
+        @CurrentUser() user,
         @Param('formationId', ParseIntPipe) formationId: number
     ){
         return this.formationService.certification(formationId, user)
@@ -99,7 +99,7 @@ export class FormationController {
     @UseGuards(RolesGuard)
     @Roles('student', 'admin')
     async validateLesson(
-        @User() user,
+        @CurrentUser() user,
         @Param('lessonId', ParseIntPipe) lessonId: number
     ) {
         return this.formationService.validateLesson(user, lessonId)
