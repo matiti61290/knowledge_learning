@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 function UserProfile() {
     const [user, setUser] = useState(null)
@@ -12,6 +12,9 @@ function UserProfile() {
         .catch(error => console.error('Erreur API :', error ))
     }, [])
     console.log(user)
+    if (!user) {
+        return <div>Chargement...</div>;
+    }
 
     return(
         <div>
