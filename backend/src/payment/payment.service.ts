@@ -78,8 +78,8 @@ export class PaymentService {
                     }
                 ],
                 mode: 'payment',
-                success_url: 'http://localhost:3000/payment/payment-success',
-                cancel_url: 'http://localhost:3000/payment/payment-cancel',
+                success_url: 'http://localhost:3001/payment/payment-success',
+                cancel_url: 'http://localhost:3001/payment/payment-cancel',
                 metadata: {
                     itemId: selectedFormation.id,
                     userId: currentUser.id,
@@ -128,8 +128,8 @@ export class PaymentService {
                     }
                 ],
                 mode: 'payment',
-                success_url: 'http://localhost:3000/payment/payment-success',
-                cancel_url: 'http://localhost:3000/payment/payment-cancel',
+                success_url: 'http://localhost:3001/payment/payment-success',
+                cancel_url: 'http://localhost:3001/payment/payment-cancel',
                 metadata: {
                     itemId: selectedLesson.id,
                     userId: currentUser.id,
@@ -163,7 +163,7 @@ export class PaymentService {
                 endpointSecret
             )
         } catch (error) {
-            return res.status(400).send(`Webhook error: ${error.message}`)
+            return res.status(401).send(`Webhook error: ${error.message}`)
         }
 
         //Check the event type and get purchase informations from the metadata

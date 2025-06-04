@@ -11,7 +11,8 @@ export class UserService {
     ){}
     
     async getUserById(id){
-        return this.userRepository.findOne({ where: { id }})
+        return this.userRepository.findOne({ where: { id },
+        relations:['roles']})
     }
 
     async findAll(): Promise<User[]> {
