@@ -12,7 +12,13 @@ export class UserService {
     
     async getUserById(id){
         return this.userRepository.findOne({ where: { id },
-        relations:['roles']})
+        relations:[
+            'purchases',
+            'purchases.formation',
+            'purchases.lesson',
+            'progresses',
+            'certificates'
+        ]})
     }
 
     async findAll(): Promise<User[]> {

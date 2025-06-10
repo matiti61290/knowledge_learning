@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 
 function LessonCard({ lesson, formationId }) {
     const lessonId = lesson.id
-    console.log(lessonId)
     const { csrfToken } = useAuth()
 
     async function handleBuy(type, id){
@@ -42,10 +41,8 @@ function LessonCard({ lesson, formationId }) {
                 <h5>{lesson.price}</h5>
                 <p className="card-text text-truncate text-break d-block" >{lesson.content}</p>
                 <div>
-                    <a href={`/formations/${formationId}/${lesson.id}`}>Plus de details</a>
                     <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
                 </div>
-                
             </div>
         </div>
     )
