@@ -77,9 +77,12 @@ export class FormationController {
      * @returns - Retourne la liste des leçons liées à la formation
      * Voir formation.service pour la logique
      */
+    @UseGuards(OptionalAuthGuard)
     @Get('/:formationId/lessons')
-    async findLessonsByFormation(@Param('formationId', ParseIntPipe) formationId: number): Promise<Lesson[]> {
-        return this.formationService.findLessonsByFormation(formationId)
+    async findLessonsByFormation(
+        @CurrentUser() user: User,
+        @Param('formationId', ParseIntPipe) formationId: number): Promise<any[]> {
+        return this.formationService.findLessonsByFormation(formationId, user)
     } 
 
     /**

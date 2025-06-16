@@ -125,18 +125,49 @@ export class FormationService {
      * @param formationId - id de la formation souhaitée
      * @returns - Retourne une liste contenant les leçons liées à la formation correspondant à l'id en paramètre
      */
-    async findLessonsByFormation(formationId: number): Promise<Lesson[]> {
-        const existingFormation = await this.formationRepository.findOne({ where: {id: formationId}})
+async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
+    const existingFormation = await this.formationRepository.findOne({ where: { id: formationId } });
 
-        if(!existingFormation) {
-            throw new NotFoundException('Cette formation n\'existe pas')
-        }
-
-        return this.lessonRepository.find({
-            where: {formation: {id: formationId}},
-            relations:['formation']
-        })
+    if (!existingFormation) {
+        throw new NotFoundException('Cette formation n\'existe pas');
     }
+
+    const lessonsByFormation = await this.lessonRepository.find({
+        where: { formation: { id: formationId } },
+        relations: ['formation'],
+    });
+
+    if (!user) {
+        return lessonsByFormation.map(lesson => ({
+            ...lesson,
+            isBought: false,
+        }));
+    }
+
+    const purchases = await this.purchaseRepository.find({
+        where: { user: { id: user.id } },
+        relations: ['lesson', 'formation']
+    });
+
+    const hasBoughtFullFormation = purchases.some(
+        purchase => purchase.formation && purchase.formation.id === formationId
+    );
+
+    let purchasedLessonsIds: number[] = [];
+
+    if (hasBoughtFullFormation) {
+        purchasedLessonsIds = lessonsByFormation.map(lesson => lesson.id);
+    } else {
+        purchasedLessonsIds = purchases
+            .filter(purchase => purchase.lesson != null)
+            .map(purchase => purchase.lesson.id);
+    }
+
+    return lessonsByFormation.map(lesson => ({
+        ...lesson,
+        isBought: purchasedLessonsIds.includes(lesson.id),
+    }));
+}
 
     /**
      * Méthode pour récupérer une lecon dans la formation sélectionnée
