@@ -74,17 +74,36 @@ export class FormationService {
      * Exception:
      * - **NotFoundException** - Retourne cette exception si la catégorie n'existe pas
      */
-    async findFormationByCategory(categoryId: number): Promise<Formation[]> {
+    async findFormationByCategory(categoryId: number, user: any): Promise<any[]> {
         const existingCategory = await this.categoryRepository.findOne({ where: {id: categoryId}})
-        
+
         if(!existingCategory) {
             throw new NotFoundException('Cette categorie n\'existe pas')
         }
 
-        return this.formationRepository.find({
+        const formationsForCategory = await this.formationRepository.find({
             where: {category: { id: categoryId}},
             relations: ['category']
         })
+
+        if(!user){
+            return formationsForCategory.map(formation => ({
+                ...formation,
+                isBought: false
+            }))
+        }
+
+        const purchases = await this.purchaseRepository.find({
+            where: {user : {id: user.id}},
+            relations: ['formation']
+        })
+
+        const purchasedFormationIds = purchases.map(purchase => purchase.formation.id)
+
+        return formationsForCategory.map(formation => ({
+            ...formation,
+            isBought: purchasedFormationIds.includes(formation.id)
+        }))
     }
 
     /**

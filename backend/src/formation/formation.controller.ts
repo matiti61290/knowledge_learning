@@ -52,9 +52,12 @@ export class FormationController {
      * @returns - Retourne une liste de formations de la catégorie choisie
      * Voir formation.service pour la logique
      */
+    @UseGuards(OptionalAuthGuard)
     @Get('category/:categoryId')
-    async findFormationByCategory(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<Formation[]> {
-        return this.formationService.findFormationByCategory(categoryId)
+    async findFormationByCategory(
+        @CurrentUser() user: User,
+        @Param('categoryId', ParseIntPipe) categoryId: number): Promise<any[]> {
+        return this.formationService.findFormationByCategory(categoryId, user)
     }
 
     /**
