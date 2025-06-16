@@ -1,9 +1,10 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 
-function FormationCard ({ formation }) {
+function FormationCard ({ formation, isBought }) {
     const formationId = formation.id
     const { csrfToken } = useAuth()
+
     async function handleBuy() {
         try{
             const res = await fetch(`http://localhost:3001/payment/create-checkout-session/formation/${formationId}`,{
@@ -37,8 +38,16 @@ function FormationCard ({ formation }) {
                 <h5 className="card-title">{formation.name}</h5>
                 <p className="card-text">{formation.price}</p>
                 <div>
-                    <a href={`/formations/${formation.id}`}>Plus de details</a>
-                    <button onClick={() => handleBuy('formation', formationId)}>Acheter</button>
+                    {!isBought ? (
+                        <>
+                            <button onClick={() => handleBuy('formation', formationId)}>Acheter</button>
+                            <a href={`/formations/${formation.id}`}>Plus de details</a>
+                        </>
+                    ) : (
+                        <>
+                            <a href={`/formations/${formation.id}`}>Acceder a la formation</a>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

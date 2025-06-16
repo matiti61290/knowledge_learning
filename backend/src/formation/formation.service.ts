@@ -49,7 +49,7 @@ export class FormationService {
         if(!user){
             return formations.map(formation => ({
                 ...formation,
-                hasBought: false
+                isBought: false
             }))
         }
 
@@ -62,7 +62,7 @@ export class FormationService {
 
         return formations.map(formation => ({
             ...formation,
-            hasBought: purchasedFormationIds.includes(formation.id)
+            isBought: purchasedFormationIds.includes(formation.id)
         }))
     }
 
