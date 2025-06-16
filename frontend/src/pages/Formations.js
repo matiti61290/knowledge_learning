@@ -13,6 +13,8 @@ function Formations () {
         .then(data => setFormations(data))
         .catch(error => console.error('Erreur API :', error))
     }, [])
+
+    console.log(formations)
     
     return (
         <div>

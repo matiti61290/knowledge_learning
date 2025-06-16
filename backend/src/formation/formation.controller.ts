@@ -5,6 +5,8 @@ import { Lesson } from '../entities/lesson.entity';
 import { CurrentUser } from '../decorators/user.decorator';
 import { RolesGuard } from '../auth/login/guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
+import { User } from 'src/entities/user.entity';
+import { OptionalAuthGuard } from 'src/auth/login/guards/optionalAuth.guard';
 
 /**
  * Gère les routes pour les formations
@@ -20,9 +22,12 @@ export class FormationController {
      * @returns - Retourne une liste contenant toutes les formations
      * Voir formation.service pour la logique
      */
+    @UseGuards(OptionalAuthGuard)
     @Get('')
-    async getAllFormation(): Promise<Formation[]> {
-        return this.formationService.findAll()
+    async getAllFormation(
+        @CurrentUser() user: User
+    ): Promise<any[]> {
+        return this.formationService.findAll(user)
     }
 
     /**

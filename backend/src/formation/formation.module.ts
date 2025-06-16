@@ -11,9 +11,10 @@ import { LoginModule } from 'src/auth/login/login.module';
 import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 import { UserProgress } from 'src/entities/userProgress.entity';
 import { UserCertification } from 'src/entities/userCertification.entity';
+import { Purchase } from 'src/entities/purchase.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Formation, Category, Lesson, User, UserProgress, UserCertification]), JwtModule, forwardRef(() => LoginModule)],
+    imports:[TypeOrmModule.forFeature([Formation, Category, Lesson, User, UserProgress, UserCertification, Purchase]), JwtModule, forwardRef(() => LoginModule)],
     controllers: [FormationController],
     providers: [FormationService],
     exports: [FormationService]

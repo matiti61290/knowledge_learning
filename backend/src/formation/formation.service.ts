@@ -1,12 +1,14 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
 import { UserProgress } from '../entities/userProgress.entity';
 import { UserCertification } from '../entities/userCertification.entity';
+import { Purchase } from 'src/entities/purchase.entity';
+import { ForgotPasswordModule } from 'src/auth/forgot-password/forgot-password.module';
 
 /**
  * Gère la partie logique des formations
@@ -30,15 +32,38 @@ export class FormationService {
         private readonly userProgressRepository: Repository<UserProgress>,
 
         @InjectRepository(UserCertification)
-        private readonly userCertification: Repository<UserCertification>
+        private readonly userCertification: Repository<UserCertification>,
+
+        @InjectRepository(Purchase)
+        private readonly purchaseRepository: Repository<Purchase>
     ) {}
 
     /**
      * Méthode pour récupérer toutes les formations disponibles
      * @returns - Retourne la liste de toute les formations
      */
-    async findAll(): Promise<Formation[]> {
-        return this.formationRepository.find()
+    async findAll(user: any): Promise<any[]> {
+
+        const formations = await this.formationRepository.find()
+
+        if(!user){
+            return formations.map(formation => ({
+                ...formation,
+                hasBought: false
+            }))
+        }
+
+        const purchases = await this.purchaseRepository.find({
+            where: { user: {id: user.id}},
+            relations: ['formation']
+        })
+
+        const purchasedFormationIds = purchases.map(purchase => purchase.formation.id)
+
+        return formations.map(formation => ({
+            ...formation,
+            hasBought: purchasedFormationIds.includes(formation.id)
+        }))
     }
 
     /**
