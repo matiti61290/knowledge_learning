@@ -7,30 +7,64 @@ function Formation() {
     const [formation, setFormation] = useState(null);
     const [lessons, setLessons] = useState([])
 
-    useEffect(() => {
-        fetch(`http://localhost:3001/formations/${formationId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur réseau");
-                }
-                return response.json();
-            })
-            .then(data => setFormation(data))
-            .catch(error => {
-                console.error("Erreur API:", error);
-            });
-    }, [formationId]);
+    // useEffect(() => {
+    //     fetch(`http://localhost:3001/formations/${formationId}`)
+    //         .then(response => {
+    //             if (!response.ok) {
+    //                 throw new Error("Erreur réseau");
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => setFormation(data))
+    //         .catch(error => {
+    //             console.error("Erreur API:", error);
+    //         });
+    // }, [formationId]);
+
+    // useEffect(() => {
+    //     fetch(`http://localhost:3001/formations/${formationId}/lessons`)
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error("Erreur reseau")
+    //         }
+    //         return response.json()
+    //     })
+    //     .then(data =>{console.log('Les donnees:', data)
+    //         setLessons(data)})
+    //     .catch(error => {
+    //         console.error("Erreur API:", error)
+    //     })
+    // }, [formationId])
 
     useEffect(() => {
-        fetch(`http://localhost:3001/formations/${formationId}/lessons`)
+        fetch(`http://localhost:3001/formations/${formationId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
         .then(response => {
-            if (!response.ok) {
+            if(!response.ok){
+                throw new Error("erreur reseau")
+            }
+            return response.json()
+        })
+        .then(data => setFormation(data))
+        .catch(error=> {
+            console.error("erreur API:", error)
+        })
+    }, [formationId])
+
+    useEffect(() => {
+        fetch(`http://localhost:3001/formations/${formationId}/lessons`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if(!response.ok) {
                 throw new Error("Erreur reseau")
             }
             return response.json()
         })
-        .then(data =>{console.log('Les donnees:', data)
-            setLessons(data)})
+        .then(data => setLessons(data))
         .catch(error => {
             console.error("Erreur API:", error)
         })
@@ -39,8 +73,8 @@ function Formation() {
     if (!formation) {
         return <div>Chargement...</div>;
     }
-
-    console.log(lessons)
+    console.log("la formation est: ", formation)
+    console.log("les lecons sont: ", lessons)
 
     return (
         <div className="container">

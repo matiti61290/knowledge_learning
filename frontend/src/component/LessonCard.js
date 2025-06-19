@@ -41,13 +41,9 @@ function LessonCard({ lesson, formationId, isBought }) {
                 <h5>{lesson.price}</h5>
                 <p className="card-text text-truncate text-break d-block" >{lesson.content}</p>
                 {!isBought ? (
-                    <>
-                        <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
-                    </> 
-                ): (
-                    <>
-                        <a href={`/formations/${formationId}/${lessonId}`}>Commencer la lecon</a>
-                    </>
+                    <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
+                    ) : (
+                    <a href={`/formations/${formationId}/${lessonId}`}>Commencer la leçon</a>
                 )}
             </div>
         </div>
