@@ -38,7 +38,6 @@ export class LoginController {
 
     @Get('/logged')
     loggedUser(@Req() req: Request) {
-        console.log(req.user)
         return req.user
     }
 }

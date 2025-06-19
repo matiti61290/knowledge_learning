@@ -7,13 +7,13 @@ const {
   doubleCsrfProtection,
   generateCsrfToken
 } = doubleCsrf({
-  getSecret: () => 'une cle', // mettre une vraie cle
+  getSecret: () => 'OneKey', // mettre une vraie cle
   getSessionIdentifier: (req: Request) => {
     return req.cookies['session-id'] || 'anonymous';
   },
   cookieName: 'x-csrf-token',
   cookieOptions: {
-    sameSite: 'strict',
+    sameSite: 'lax',
     path: '/',
     secure: false //Pensez a mettre TRUE en prod
   },
@@ -22,13 +22,15 @@ const {
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
+
     doubleCsrfProtection(req, res, (err) => {
       if (err) {
-        throw new UnauthorizedException('Invalid CSRF Token');
+        throw new UnauthorizedException('Invalid CSRF Token', err.message);
       }
       next();
     });
   }
+
 }
 
 export { generateCsrfToken };

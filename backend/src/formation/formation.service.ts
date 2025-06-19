@@ -1,12 +1,14 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from '../entities/lesson.entity';
 import { User } from '../entities/user.entity'
 import { UserProgress } from '../entities/userProgress.entity';
 import { UserCertification } from '../entities/userCertification.entity';
+import { Purchase } from 'src/entities/purchase.entity';
+import { ForgotPasswordModule } from 'src/auth/forgot-password/forgot-password.module';
 
 /**
  * Gère la partie logique des formations
@@ -30,15 +32,38 @@ export class FormationService {
         private readonly userProgressRepository: Repository<UserProgress>,
 
         @InjectRepository(UserCertification)
-        private readonly userCertification: Repository<UserCertification>
+        private readonly userCertification: Repository<UserCertification>,
+
+        @InjectRepository(Purchase)
+        private readonly purchaseRepository: Repository<Purchase>
     ) {}
 
     /**
      * Méthode pour récupérer toutes les formations disponibles
      * @returns - Retourne la liste de toute les formations
      */
-    async findAll(): Promise<Formation[]> {
-        return this.formationRepository.find()
+    async findAll(user: any): Promise<any[]> {
+
+        const formations = await this.formationRepository.find()
+
+        if(!user){
+            return formations.map(formation => ({
+                ...formation,
+                isBought: false
+            }))
+        }
+
+        const purchases = await this.purchaseRepository.find({
+            where: { user: {id: user.id}},
+            relations: ['formation']
+        })
+
+        const purchasedFormationIds = purchases.map(purchase => purchase.formation.id)
+
+        return formations.map(formation => ({
+            ...formation,
+            isBought: purchasedFormationIds.includes(formation.id)
+        }))
     }
 
     /**
@@ -49,17 +74,36 @@ export class FormationService {
      * Exception:
      * - **NotFoundException** - Retourne cette exception si la catégorie n'existe pas
      */
-    async findFormationByCategory(categoryId: number): Promise<Formation[]> {
+    async findFormationByCategory(categoryId: number, user: any): Promise<any[]> {
         const existingCategory = await this.categoryRepository.findOne({ where: {id: categoryId}})
-        
+
         if(!existingCategory) {
             throw new NotFoundException('Cette categorie n\'existe pas')
         }
 
-        return this.formationRepository.find({
+        const formationsForCategory = await this.formationRepository.find({
             where: {category: { id: categoryId}},
             relations: ['category']
         })
+
+        if(!user){
+            return formationsForCategory.map(formation => ({
+                ...formation,
+                isBought: false
+            }))
+        }
+
+        const purchases = await this.purchaseRepository.find({
+            where: {user : {id: user.id}},
+            relations: ['formation']
+        })
+
+        const purchasedFormationIds = purchases.map(purchase => purchase.formation.id)
+
+        return formationsForCategory.map(formation => ({
+            ...formation,
+            isBought: purchasedFormationIds.includes(formation.id)
+        }))
     }
 
     /**
@@ -81,18 +125,54 @@ export class FormationService {
      * @param formationId - id de la formation souhaitée
      * @returns - Retourne une liste contenant les leçons liées à la formation correspondant à l'id en paramètre
      */
-    async findLessonsByFormation(formationId: number): Promise<Lesson[]> {
-        const existingFormation = await this.formationRepository.findOne({ where: {id: formationId}})
+async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
+    const existingFormation = await this.formationRepository.findOne({
+        where: { id: formationId },
+    });
 
-        if(!existingFormation) {
-            throw new NotFoundException('Cette formation n\'existe pas')
-        }
-
-        return this.lessonRepository.find({
-            where: {formation: {id: formationId}},
-            relations:['formation']
-        })
+    if (!existingFormation) {
+        throw new NotFoundException('Cette formation n\'existe pas');
     }
+
+    const lessonsByFormation = await this.lessonRepository.find({
+        where: { formation: { id: formationId } },
+        relations: ['formation'],
+    });
+
+    if (!user) {
+        return lessonsByFormation.map(lesson => ({
+            ...lesson,
+            isBought: false,
+        }));
+    }
+
+    const purchases = await this.purchaseRepository.find({
+        where: { user: { id: user.id } },
+        relations: ['lesson', 'lesson.formation', 'formation'],
+    });
+
+    const purchasesFormation = purchases.filter(
+        p => p.formation?.id === formationId && !p.lesson
+    );
+
+    const purchasesLessons = purchases.filter(
+        p => p.lesson?.formation?.id === formationId
+    );
+
+    const hasBoughtFullFormation = purchasesFormation.length > 0;
+
+    const purchasedLessonsIds = hasBoughtFullFormation
+        ? lessonsByFormation.map(l => l.id)
+        : purchasesLessons.map(p => p.lesson.id);
+
+    return lessonsByFormation.map(lesson => ({
+        ...lesson,
+        isBought: purchasedLessonsIds.includes(lesson.id),
+    }));
+}
+
+
+
 
     /**
      * Méthode pour récupérer une lecon dans la formation sélectionnée

@@ -1,28 +1,31 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
-import * as express from 'express'
-import * as bodyParser from 'body-parser'
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as cookieParser from 'cookie-parser'
-import * as cors from 'cors'
+import * as cookieParser from 'cookie-parser';
+import * as cors from 'cors';
 
 async function bootstrap() {
-  dotenv.config()
+  dotenv.config();
 
-  const server = express()
+  const server = express();
 
+  server.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
+
+  server.use(cookieParser());
   server.use(cors({
-    origin:'http://localhost:3000',
-    credentials: true
-  }))
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }));
 
-  server.post('/payment/webhook', bodyParser.raw({ type: 'application/json' }))
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), { cors: false});
+  server.use(bodyParser.json());
+  server.use(bodyParser.urlencoded({ extended: true }));
 
-  app.use(cookieParser())
-  
-  await app.init()
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), { cors: false });
+
+  await app.init();
   await app.listen(process.env.PORT || 3001);
 }
 bootstrap();

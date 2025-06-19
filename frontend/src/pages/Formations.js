@@ -13,6 +13,8 @@ function Formations () {
         .then(data => setFormations(data))
         .catch(error => console.error('Erreur API :', error))
     }, [])
+
+    console.log(formations)
     
     return (
         <div>
@@ -21,7 +23,7 @@ function Formations () {
                 <div className="row">
                     {formations.map((formation) => (
                         <div className="col-12 col-lg-4 col-md-6 my-5">
-                            <FormationCard key={formation.id} formation={formation} />
+                            <FormationCard key={formation.id} formation={formation} isBought={formation.isBought}/>
                         </div>
                     ))}
                 </div>
