@@ -126,7 +126,9 @@ export class FormationService {
      * @returns - Retourne une liste contenant les leçons liées à la formation correspondant à l'id en paramètre
      */
 async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
-    const existingFormation = await this.formationRepository.findOne({ where: { id: formationId } });
+    const existingFormation = await this.formationRepository.findOne({
+        where: { id: formationId },
+    });
 
     if (!existingFormation) {
         throw new NotFoundException('Cette formation n\'existe pas');
@@ -146,28 +148,31 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
 
     const purchases = await this.purchaseRepository.find({
         where: { user: { id: user.id } },
-        relations: ['lesson', 'formation']
+        relations: ['lesson', 'lesson.formation', 'formation'],
     });
 
-    const hasBoughtFullFormation = purchases.some(
-        purchase => purchase.formation && purchase.formation.id === formationId
+    const purchasesFormation = purchases.filter(
+        p => p.formation?.id === formationId && !p.lesson
     );
 
-    let purchasedLessonsIds: number[] = [];
+    const purchasesLessons = purchases.filter(
+        p => p.lesson?.formation?.id === formationId
+    );
 
-    if (hasBoughtFullFormation) {
-        purchasedLessonsIds = lessonsByFormation.map(lesson => lesson.id);
-    } else {
-        purchasedLessonsIds = purchases
-            .filter(purchase => purchase.lesson != null)
-            .map(purchase => purchase.lesson.id);
-    }
+    const hasBoughtFullFormation = purchasesFormation.length > 0;
+
+    const purchasedLessonsIds = hasBoughtFullFormation
+        ? lessonsByFormation.map(l => l.id)
+        : purchasesLessons.map(p => p.lesson.id);
 
     return lessonsByFormation.map(lesson => ({
         ...lesson,
         isBought: purchasedLessonsIds.includes(lesson.id),
     }));
 }
+
+
+
 
     /**
      * Méthode pour récupérer une lecon dans la formation sélectionnée

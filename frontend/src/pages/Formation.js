@@ -29,7 +29,8 @@ function Formation() {
             }
             return response.json()
         })
-        .then(data => setLessons(data))
+        .then(data =>{console.log('Les donnees:', data)
+            setLessons(data)})
         .catch(error => {
             console.error("Erreur API:", error)
         })
@@ -39,13 +40,15 @@ function Formation() {
         return <div>Chargement...</div>;
     }
 
+    console.log(lessons)
+
     return (
         <div className="container">
             <div className="row">
                 <h2>{formation.name}</h2>
                 {lessons.map((lesson) => (
                     <div className="col-12 col-lg-6 my-5">
-                        <LessonCard key={lesson.id} lesson={lesson} formationId={formationId} />
+                        <LessonCard key={lesson.id} lesson={lesson} isBought={lesson.isBought} formationId={formationId} />
                     </div>
                 ))}
             </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 
-function LessonCard({ lesson, formationId }) {
+function LessonCard({ lesson, formationId, isBought }) {
     const lessonId = lesson.id
     const { csrfToken } = useAuth()
 
@@ -40,9 +40,15 @@ function LessonCard({ lesson, formationId }) {
             <div className="card-body">
                 <h5>{lesson.price}</h5>
                 <p className="card-text text-truncate text-break d-block" >{lesson.content}</p>
-                <div>
-                    <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
-                </div>
+                {!isBought ? (
+                    <>
+                        <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
+                    </> 
+                ): (
+                    <>
+                        <a href={`/formations/${formationId}/${lessonId}`}>Commencer la lecon</a>
+                    </>
+                )}
             </div>
         </div>
     )
