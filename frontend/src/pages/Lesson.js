@@ -22,8 +22,6 @@ function Lesson ( ) {
         });
     }, [formationId, lessonId])
 
-    console.log(lesson)
-
     if (!lesson) {
         return <div>Chargement...</div>;
     }
@@ -31,6 +29,16 @@ function Lesson ( ) {
     return (
         <div>
             <h1>{lesson.title}</h1>
+            <div>
+                {lesson.url_video === "undefined" ? (
+                    <video width={640} height={360} controls>
+                        <source src={lesson.url_video} type="video/mp4" />
+                    </video>
+                ) : (
+                    <pa>Ya une video</pa>
+                )}
+                <p>{lesson.content}</p>
+            </div>
         </div>
     )
 }
