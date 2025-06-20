@@ -11,7 +11,7 @@ function UserProfile() {
         .then(data => setUser(data))
         .catch(error => console.error('Erreur API :', error ))
     }, [])
-    console.log(user)
+    
     if (!user) {
         return <div>Chargement...</div>;
     }

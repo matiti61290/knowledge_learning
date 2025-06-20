@@ -6,35 +6,7 @@ function Formation() {
     const { formationId } = useParams();
     const [formation, setFormation] = useState(null);
     const [lessons, setLessons] = useState([])
-
-    // useEffect(() => {
-    //     fetch(`http://localhost:3001/formations/${formationId}`)
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error("Erreur réseau");
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => setFormation(data))
-    //         .catch(error => {
-    //             console.error("Erreur API:", error);
-    //         });
-    // }, [formationId]);
-
-    // useEffect(() => {
-    //     fetch(`http://localhost:3001/formations/${formationId}/lessons`)
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error("Erreur reseau")
-    //         }
-    //         return response.json()
-    //     })
-    //     .then(data =>{console.log('Les donnees:', data)
-    //         setLessons(data)})
-    //     .catch(error => {
-    //         console.error("Erreur API:", error)
-    //     })
-    // }, [formationId])
+   
 
     useEffect(() => {
         fetch(`http://localhost:3001/formations/${formationId}`, {
