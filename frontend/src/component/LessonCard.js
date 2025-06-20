@@ -39,7 +39,6 @@ function LessonCard({ lesson, formationId, isBought }) {
             </div>
             <div className="card-body">
                 <h5>{lesson.price}</h5>
-                <p className="card-text text-truncate text-break d-block" >{lesson.content}</p>
                 {!isBought ? (
                     <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
                     ) : (

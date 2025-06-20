@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 import { useAuth } from "../context/AuthContext";
 
 function FormationCard ({ formation, isBought }) {
     const formationId = formation.id
     const { csrfToken } = useAuth()
+    const [ certificationOk, setCertificationOk ] =useState(true)
+
+    useEffect(() => {
+        fetch(`http://localhost:3001/formations/certification/${formationId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(async (response) => {
+            if(!response.ok) {
+                throw new Error(await response.text())
+            }
+            return response.text()
+        })
+        .then(() => {
+            setCertificationOk(true)
+        })
+        .catch((error) => {
+            console.error('Certification error:', error)
+            setCertificationOk(false)
+        })
+    }, [formationId])
 
     async function handleBuy() {
         try{
@@ -46,6 +67,9 @@ function FormationCard ({ formation, isBought }) {
                     ) : (
                         <>
                             <a href={`/formations/${formation.id}`}>Acceder a la formation</a>
+                            {certificationOk === true && 
+                                <button onClick="">Voir votre certificat</button>
+                            }
                         </>
                     )}
                 </div>
