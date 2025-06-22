@@ -47,7 +47,6 @@ export class AppModule implements NestModule {
       {path: 'formations/category/:categoryId', method: RequestMethod.GET},
       {path: 'formations/:formationId', method: RequestMethod.GET},
       {path: 'payment/webhook', method: RequestMethod.POST}
-      // {path: '/logged', method: RequestMethod.GET}
     ).forRoutes('*')
   }
 }

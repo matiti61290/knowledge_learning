@@ -137,7 +137,6 @@ export class PaymentService {
                 }
             })
             
-            console.log(session.metadata)
             return session
         } catch (error) {
             console.error('Error creating session', error)

@@ -54,21 +54,21 @@ function FormationCard ({ formation, isBought }) {
     }
 
     return(
-        <div className="card" style={{height: 10 +'em'}}>
+        <div className="card" style={{height: 15 +'em'}}>
             <div className="card-body">
                 <h5 className="card-title">{formation.name}</h5>
-                <p className="card-text">{formation.price}</p>
-                <div>
+                <p className="card-text fw-semibold">{formation.price} €</p>
+                <div className="d-flex flex-column align-items-center">
                     {!isBought ? (
                         <>
-                            <button onClick={() => handleBuy('formation', formationId)}>Acheter</button>
-                            <a href={`/formations/${formation.id}`}>Plus de details</a>
+                            <button className="btn btn-info my-1" onClick={() => handleBuy('formation', formationId)}>Acheter</button>
+                            <a className="btn btn-light my-1" href={`/formations/${formation.id}`}>Plus de details</a>
                         </>
                     ) : (
                         <>
-                            <a href={`/formations/${formation.id}`}>Acceder a la formation</a>
+                            <a className="btn btn-info my-1" href={`/formations/${formation.id}`}>Acceder a la formation</a>
                             {certificationOk === true && 
-                                <a href={`certificate/${formationId}`}>Acceder a votre certificat</a>
+                                <a className="btn btn-primary my-1" href={`certificate/${formationId}`}>Acceder a votre certificat</a>
                             }
                         </>
                     )}
