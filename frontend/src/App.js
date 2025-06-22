@@ -10,6 +10,7 @@ import Category from "./pages/Category.js"
 import Lesson from './pages/Lesson.js'
 import Register from "./pages/Register.js";
 import UserProfile from "./pages/UserProfile.js";
+import Certificate from "./pages/Certificate.js";
 
 function App() {
  return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/formations/:formationId/:lessonId" element={<Lesson />} />
         <Route path="/register" element={<Register/>} />
         <Route path="/userProfile" element={<UserProfile/>} />
+        <Route path="/certificate/:formationId" element={<Certificate/>} />
       </Routes>
     </main>
     <Footer />
