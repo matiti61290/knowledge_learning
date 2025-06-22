@@ -45,8 +45,6 @@ function Formation() {
     if (!formation) {
         return <div>Chargement...</div>;
     }
-    console.log("la formation est: ", formation)
-    console.log("les lecons sont: ", lessons)
 
     return (
         <div className="container">

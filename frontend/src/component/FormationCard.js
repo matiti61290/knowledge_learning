@@ -68,7 +68,7 @@ function FormationCard ({ formation, isBought }) {
                         <>
                             <a href={`/formations/${formation.id}`}>Acceder a la formation</a>
                             {certificationOk === true && 
-                                <button onClick="">Voir votre certificat</button>
+                                <a href={`certificate/${formationId}`}>Acceder a votre certificat</a>
                             }
                         </>
                     )}

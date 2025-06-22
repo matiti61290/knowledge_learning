@@ -280,7 +280,10 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
      * @returns - retourne les informations de la formation et de l'utilisateur
      */
     async certification(formationId: number, user: any){
-        const formationCertified = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
+        const formationCertified = await this.userCertification.findOne({
+            where:{formation: {id:formationId}, user:{ id: user.id}},
+            relations:['formation']
+        })
 
         if(!formationCertified){
             throw new NotFoundException('Cette formation n\'a pas ete completee')
@@ -294,14 +297,7 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
         if(!currentUser){
             throw new NotFoundException('User not found')
         }
-
-        const currentFormation = await this.formationRepository.findOne({where: {id: formationId}})
-
-        if(!currentFormation){
-            throw new NotFoundException("Formation not found")
-        }
-
-        //replace by data when front will be added
-        return `Bravo ${currentUser.firstname}. Vous avez complete la formation ${currentFormation.name}.`
+        
+        return formationCertified
     }
 }
