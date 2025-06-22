@@ -35,14 +35,14 @@ function LessonCard({ lesson, formationId, isBought }) {
     return(
         <div className="card">
             <div className="card-header bg-info-subtle">
-                <h3>{lesson.title}</h3>
+                <h3 className="card-title">{lesson.title}</h3>
             </div>
             <div className="card-body">
-                <h5>{lesson.price}</h5>
+                <p className="card-text fw-semibold">{lesson.price} €</p>
                 {!isBought ? (
-                    <button onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
+                    <button className="btn btn-info my-1" onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
                     ) : (
-                    <a href={`/formations/${formationId}/${lessonId}`}>Commencer la leçon</a>
+                    <a className="btn btn-primary my-1" href={`/formations/${formationId}/${lessonId}`}>Commencer la leçon</a>
                 )}
             </div>
         </div>
