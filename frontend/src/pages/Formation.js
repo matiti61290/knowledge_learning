@@ -47,7 +47,7 @@ function Formation() {
     }
 
     return (
-        <div className="container">
+        <div className="container mt-5">
             <div className="row">
                 <h2>{formation.name}</h2>
                 {lessons.map((lesson) => (

@@ -10,8 +10,8 @@ export class OptionalAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const token = request.cookies?.access_token;
 
+    //Check if a token exists, but doesn't block the user
     if (!token) {
-      // Pas de token, mais on laisse passer quand même
       return true;
     }
 
@@ -19,7 +19,7 @@ export class OptionalAuthGuard implements CanActivate {
       const decoded = this.jwtService.verify(token);
       request.user = decoded;
     } catch (e) {
-      // Token invalide, on ignore et on laisse passer (ou tu peux logger)
+      throw new Error ("Le token n'a pas pu etre decode")
     }
 
     return true;

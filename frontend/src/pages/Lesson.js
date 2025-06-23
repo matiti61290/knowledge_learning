@@ -44,7 +44,7 @@ function Lesson ( ) {
     }
 
     return (
-        <div className="container">
+        <div className="container mb-5">
             <h1 className="mt-5 fw-bold text-decoration-underline">{lesson.title}</h1>
             <div className="d-flex flex-column align-items-center">
                 <div className="my-4">
@@ -53,7 +53,7 @@ function Lesson ( ) {
                     </video>
                 </div>
                 <p>{lesson.content}</p>
-                <button onClick={()=> validateLesson(lessonId)}>Servira a valider la lecon</button>
+                <button className="btn btn-primary" onClick={()=> validateLesson(lessonId)}>Finir la lecon</button>
             </div>
         </div>
     )

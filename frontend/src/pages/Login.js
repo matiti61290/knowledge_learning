@@ -43,11 +43,11 @@ function Login () {
           <h2>Connexion</h2>
           <div className="d-flex flex-column my-3">
             <label>Email: </label>
-            <input type="mail" value={mail} onChange={(e) => setMail(e.target.value)} required />
+            <input style={{width: 20 + 'em'}} type="mail" value={mail} onChange={(e) => setMail(e.target.value)} required />
           </div>
           <div className="d-flex flex-column my-3">
             <label>Mot de passe: </label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <input style={{width: 20 + 'em'}} type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
           <button className="btn btn-secondary" type="submit">Se connecter</button>
           <p className="mt-3">{message}</p>

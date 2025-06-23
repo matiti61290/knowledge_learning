@@ -41,23 +41,23 @@ function Register() {
                 <h2>Inscription</h2>
                 <div className="d-flex flex-column my-3">
                     <label>Prénom</label>
-                    <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} style={{width: 20 + 'em' }} required />
+                    <input style={{width: 20 + 'em'}} type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} required />
                 </div>
                 <div className="d-flex flex-column my-3">
                     <label >Nom</label>
-                    <input type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} required />
+                    <input style={{width: 20 + 'em'}} type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} required />
                 </div>
                 <div className="d-flex flex-column my-3">
                     <label>Email</label>
-                    <input type="mail" value={mail} onChange={(e) => setMail(e.target.value)} required />
+                    <input style={{width: 20 + 'em'}} type="mail" value={mail} onChange={(e) => setMail(e.target.value)} required />
                 </div>
                 <div className="d-flex flex-column my-3">
                     <label>Mot de passe</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    <input style={{width: 20 + 'em'}} type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div className="d-flex flex-column my-3">
                     <label>Confirmer le mot de passe</label>
-                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                    <input style={{width: 20 + 'em'}} type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
                 </div>
                 <button className="btn btn-secondary" type="submit">S'inscrire</button>
                 <p className="mt-3">{message}</p>

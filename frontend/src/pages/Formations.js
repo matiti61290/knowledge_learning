@@ -17,8 +17,8 @@ function Formations () {
     console.log(formations)
     
     return (
-        <div>
-            <h2>Formations</h2>
+        <div className="container mt-5">
+            <h2>Nos formations</h2>
             <div className="container">
                 <div className="row">
                     {formations.map((formation) => (

@@ -22,10 +22,11 @@ function Category() {
             })
             .catch(error => console.error("Erreur API :", error));
     }, [categoryId]); 
+    console.log("les formations sont: ", formationsByCategory)
 
     return (
-        <div>
-            <h2>Les formations</h2>
+        <div className="container mt-5">
+            <h2>Nos formations</h2>
             <div className="container">
                 <div className="row d-flex justify-content-center">
                     {formationsByCategory.map((formation) => (

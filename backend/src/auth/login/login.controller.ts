@@ -36,6 +36,7 @@ export class LoginController {
 
     }
 
+    //Check if user is logged and retrieve user data
     @Get('/logged')
     loggedUser(@Req() req: Request) {
         return req.user
