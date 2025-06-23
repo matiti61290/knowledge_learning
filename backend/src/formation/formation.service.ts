@@ -151,19 +151,20 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
         relations: ['lesson', 'lesson.formation', 'formation'],
     });
 
+    //logic to check if a lesson is bought
     const purchasesFormation = purchases.filter(
-        p => p.formation?.id === formationId && !p.lesson
+        purchase => purchase.formation?.id === formationId && !purchase.lesson
     );
 
     const purchasesLessons = purchases.filter(
-        p => p.lesson?.formation?.id === formationId
+        purchase => purchase.lesson?.formation?.id === formationId
     );
 
     const hasBoughtFullFormation = purchasesFormation.length > 0;
 
     const purchasedLessonsIds = hasBoughtFullFormation
-        ? lessonsByFormation.map(l => l.id)
-        : purchasesLessons.map(p => p.lesson.id);
+        ? lessonsByFormation.map(lesson => lesson.id)
+        : purchasesLessons.map(purchase => purchase.lesson.id);
 
     return lessonsByFormation.map(lesson => ({
         ...lesson,
