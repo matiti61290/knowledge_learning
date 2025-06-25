@@ -37,10 +37,10 @@ function Certificate() {
     console.log(formationId)
     return(
         <div className="container d-flex flex-column align-items-center mt-5">
-            <h1>Certificat de reussite</h1>
-            <p>Ce certificat est attente que</p>
+            <h1>Certificat de réussite</h1>
+            <p>Ce certificat atteste que</p>
             <p>{user.firstname} {user.lastname}</p>
-            <p>a complete la formation {certificate.formation.name}</p> 
+            <p>a complété la formation. {certificate.formation.name}</p> 
         </div>
     )
 }
