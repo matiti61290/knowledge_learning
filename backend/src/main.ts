@@ -46,27 +46,45 @@ async function bootstrap() {
 
   const server = express();
 
-  // Stripe raw body (uniquement pour webhook Stripe)
+  // ✅ Stripe webhook: raw body nécessaire
   server.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
 
-  // Body parsing standard pour toutes les autres routes
+  // ✅ Middleware pour résoudre les problèmes CORS précoces (OPTIONS)
+  server.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://knowledge-learning-1-7gl2.onrender.com');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, x-csrf-token'
+    );
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+
+    next();
+  });
+
+  // ✅ Body parsing standard pour tout le reste
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: true }));
 
-  // Cookies
+  // ✅ Cookies
   server.use(cookieParser());
 
-  // Logger pour debug
+  // ✅ Logger simple
   server.use((req, res, next) => {
     console.log(`Request ${req.method} ${req.url}`);
     next();
   });
 
+  // ✅ Création de l'app Nest
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
-    cors: false, // on le gère manuellement ensuite
+    cors: false, // on configure CORS manuellement
   });
 
-  // Activer CORS avec NestJS
+  // ✅ CORS depuis Nest (doit venir *avant* app.init())
   app.enableCors({
     origin: 'https://knowledge-learning-1-7gl2.onrender.com',
     credentials: true,
@@ -74,10 +92,12 @@ async function bootstrap() {
 
   await app.init();
 
-  // 🎯 Lancement du serveur Express (PAS app.listen)
+  // ✅ Render attend qu'on écoute sur process.env.PORT
   const port = process.env.PORT || 3001;
   server.listen(port, () => {
-    console.log(`🚀 Server is running on port ${port}`);
+    console.log(`🚀 Server running on port ${port}`);
   });
 }
+
 bootstrap();
+
