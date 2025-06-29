@@ -32,8 +32,8 @@ export class PaymentController {
      * @returns une session de paiement Stripe
      */
     @Post('create-checkout-session/:type/:id')
-    // @UseGuards(RolesGuard)
-    // @Roles('student', 'admin')
+    @UseGuards(RolesGuard)
+    @Roles('student', 'admin')
     async createCheckoutSession(
     @CurrentUser() user, @Param('type') type: string, @Param('id') id: number){
         let session: Stripe.Checkout.Session
