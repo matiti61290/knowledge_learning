@@ -37,10 +37,8 @@ export class PaymentController {
     async createCheckoutSession(
     @CurrentUser() user, @Param('type') type: string, @Param('id') id: number){
         let session: Stripe.Checkout.Session
-
         if(type === 'formation'){
             session = await this.paymentService.createCheckoutSessionFormation(id, user, type)
-            console.log('Session:', session)
         } else if (type === 'lesson'){
             session = await this.paymentService.createCheckoutSessionLesson(id, user, type)
         } else {
@@ -50,9 +48,8 @@ export class PaymentController {
           if (!session.url) {
             throw new InternalServerErrorException('Session créée mais URL absente');
         }
-
-        const urlSession = session.url
-        return urlSession
+        
+        return { url: session.url}
     }
 
     /**
