@@ -16,7 +16,7 @@ async function bootstrap() {
 
   server.use(cookieParser());
   server.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://knowledge-learning-1-7gl2.onrender.com',
     credentials: true,
   }));
 
