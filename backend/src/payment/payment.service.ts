@@ -57,7 +57,7 @@ export class PaymentService {
 
         //Get user informations
         const currentUser = user
-        if(!user){
+        if(!currentUser){
             throw Error('User not found')
         }
 
