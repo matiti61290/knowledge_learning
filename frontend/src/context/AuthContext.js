@@ -21,7 +21,13 @@ export function AuthProvider({ children }) {
                     'x-csrf-token': csrfData.csrfToken
                 }
             })
-            setIsLogged(res.ok)
+                if (!res.ok) {
+                    setIsLogged(false);
+                    return;
+                }
+
+                const user = await res.json();
+                setIsLogged(user && typeof user === 'object' && Object.keys(user).length > 0);
         } catch(err) {
             console.error("Erreur de vérification du login", err);
             setIsLogged(false); 
