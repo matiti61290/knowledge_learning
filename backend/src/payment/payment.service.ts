@@ -78,8 +78,8 @@ export class PaymentService {
                     }
                 ],
                 mode: 'payment',
-                success_url: 'http://localhost:3001/payment/payment-success',
-                cancel_url: 'http://localhost:3001/payment/payment-cancel',
+                success_url: 'https://knowledge-learning-1-7gl2.onrender.com',
+                cancel_url: 'https://knowledge-learning-1-7gl2.onrender.com',
                 metadata: {
                     itemId: selectedFormation.id,
                     userId: currentUser.id,
