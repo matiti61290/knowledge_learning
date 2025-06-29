@@ -36,12 +36,16 @@ export class PaymentController {
     // @Roles('student', 'admin')
     async createCheckoutSession(
     @CurrentUser() user, @Param('type') type: string, @Param('id') id: number){
-        console.log('USER:', user);
+        let session: Stripe.Checkout.Session
         if(type === 'formation'){
-            return this.paymentService.createCheckoutSessionFormation(id, user, type)
+            session = await this.paymentService.createCheckoutSessionFormation(id, user, type)
         } else if (type === 'lesson'){
-            return this.paymentService.createCheckoutSessionLesson(id, user, type)
+            session = await this.paymentService.createCheckoutSessionLesson(id, user, type)
+        } else {
+            throw new BadRequestException('Type invalide');
         }
+
+        return { url: session.url}
     }
 
     /**
