@@ -13,7 +13,7 @@ export class CsrfController {
       res.cookie('session-id', sessionId, {
         sameSite:'strict',
         path:'/',
-        secure:false,
+        secure:true,
         httpOnly:false
       })
       req.cookies['session-id'] = sessionId
