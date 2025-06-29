@@ -7,7 +7,7 @@ function Category() {
     const [formationsByCategory, setFormationsByCategory] = useState([]);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/${categoryId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/category/${categoryId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -18,8 +18,7 @@ function Category() {
                 return response.json();
             })
             .then(data => {
-                 const formationsArray = Array.isArray(data) ? data : Object.values(data)
-                setFormationsByCategory(formationsArray);
+                setFormationsByCategory(data);
             })
             .catch(error => console.error("Erreur API :", error));
     }, [categoryId]); 
