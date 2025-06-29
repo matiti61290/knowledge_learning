@@ -1,11 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import * as dotenv from 'dotenv';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
+// import { NestFactory } from '@nestjs/core';
+// import { AppModule } from './app.module';
+// import * as dotenv from 'dotenv';
+// import * as express from 'express';
+// import * as bodyParser from 'body-parser';
+// import { ExpressAdapter } from '@nestjs/platform-express';
+// import * as cookieParser from 'cookie-parser';
+// import * as cors from 'cors';
 
 // async function bootstrap() {
 //   dotenv.config();
@@ -33,36 +33,51 @@ import * as cors from 'cors';
 //   await app.listen(process.env.PORT || 3001);
 // }
 // bootstrap();
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import * as dotenv from 'dotenv';
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as cookieParser from 'cookie-parser';
+
 async function bootstrap() {
   dotenv.config();
 
   const server = express();
 
-  // Stripe raw body
+  // Stripe raw body (uniquement pour webhook Stripe)
   server.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
+
+  // Body parsing standard pour toutes les autres routes
+  server.use(bodyParser.json());
+  server.use(bodyParser.urlencoded({ extended: true }));
 
   // Cookies
   server.use(cookieParser());
 
-  // Logger
+  // Logger pour debug
   server.use((req, res, next) => {
     console.log(`Request ${req.method} ${req.url}`);
     next();
   });
 
-  // Parsers
-  server.use(bodyParser.json());
-  server.use(bodyParser.urlencoded({ extended: true }));
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+    cors: false, // on le gère manuellement ensuite
+  });
 
-  // Création de l'app Nest (autoriser CORS)
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
-
-  // 🟩 Active CORS avec Nest
+  // Activer CORS avec NestJS
   app.enableCors({
     origin: 'https://knowledge-learning-1-7gl2.onrender.com',
     credentials: true,
   });
 
   await app.init();
-  await app.listen(process.env.PORT || 3001);
+
+  // 🎯 Lancement du serveur Express (PAS app.listen)
+  const port = process.env.PORT || 3001;
+  server.listen(port, () => {
+    console.log(`🚀 Server is running on port ${port}`);
+  });
 }
+bootstrap();
