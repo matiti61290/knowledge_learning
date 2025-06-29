@@ -11,6 +11,7 @@ import Lesson from './pages/Lesson.js'
 import Register from "./pages/Register.js";
 import UserProfile from "./pages/UserProfile.js";
 import Certificate from "./pages/Certificate.js";
+import PageNotFound from "./pages/PageNotFound.js";
 
 function App() {
  return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/register" element={<Register/>} />
         <Route path="/userProfile" element={<UserProfile/>} />
         <Route path="/certificate/:formationId" element={<Certificate/>} />
+        <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </main>
     <Footer />

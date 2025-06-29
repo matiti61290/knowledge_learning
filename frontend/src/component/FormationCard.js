@@ -66,9 +66,9 @@ function FormationCard ({ formation, isBought }) {
                         </>
                     ) : (
                         <>
-                            <a className="btn btn-info my-1" href={`/formations/${formation.id}`}>Acceder a la formation</a>
+                            <a className="btn btn-info my-1" href={`/formations/${formation.id}`}>Accéder à la formation</a>
                             {certificationOk === true && 
-                                <a className="btn btn-primary my-1" href={`certificate/${formationId}`}>Acceder a votre certificat</a>
+                                <a className="btn btn-primary my-1" href={`certificate/${formationId}`}>Accéder à votre certificat</a>
                             }
                         </>
                     )}

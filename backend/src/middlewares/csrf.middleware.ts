@@ -15,7 +15,7 @@ const {
   cookieOptions: {
     sameSite: 'lax',
     path: '/',
-    secure: false //Pensez a mettre TRUE en prod
+    secure: true //in prod only
   },
 });
 
