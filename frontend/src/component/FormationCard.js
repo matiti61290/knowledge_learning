@@ -62,7 +62,7 @@ function FormationCard ({ formation, isBought }) {
                 <div className="d-flex flex-column align-items-center">
                     {!isBought ? (
                         <>
-                            <button className="btn btn-info my-1" onClick={() => handleBuy('formation', formationId)}>Acheter</button>
+                            <button type="button" className="btn btn-info my-1" onClick={() => handleBuy('formation', formationId)}>Acheter</button>
                             <Link className="btn btn-light my-1" to={`/formations/${formation.id}`}>Plus de details</Link>
                         </>
                     ) : (
