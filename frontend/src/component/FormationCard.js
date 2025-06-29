@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function FormationCard ({ formation, isBought }) {
     const formationId = formation.id
