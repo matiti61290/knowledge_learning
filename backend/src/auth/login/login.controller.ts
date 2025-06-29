@@ -29,8 +29,6 @@ export class LoginController {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'none',
-                domain: ".knowledge-learning-uqa2.onrender.com",
-                path: '/',
                 maxAge: 1000*60*60*24
             })
 
