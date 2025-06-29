@@ -298,7 +298,7 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
         if(!currentUser){
             throw new NotFoundException('User not found')
         }
-        
+        console.log('la formation certifie est: ',formationCertified)
         return formationCertified
     }
 }
