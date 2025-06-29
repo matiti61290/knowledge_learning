@@ -54,9 +54,11 @@ export class PaymentService {
     async createCheckoutSessionFormation(id: number, user: any, type: string): Promise<Stripe.Checkout.Session> {
         // Find the formation with the id
         const selectedFormation = await this.formationRepository.findOne({ where: { id: id}})
+        console.log('Voici la formation:', selectedFormation)
 
         //Get user informations
         const currentUser = user
+        console.log('voici l\'utilisateur')
 
         if(!selectedFormation) {
             throw new NotFoundException('Cette formation n\'existe pas')
@@ -87,6 +89,7 @@ export class PaymentService {
                 }
             })
 
+            console.log('voici la session: ',session)
             return session
         } catch (error) {
             throw new InternalServerErrorException('Failed to create checkout session')
