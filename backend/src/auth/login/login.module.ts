@@ -27,7 +27,8 @@ dotenv.config()
 export class LoginModule {
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(AuthMiddleware).exclude(
-        {path: 'login', method: RequestMethod.POST})
-        .forRoutes('login/logged')
+        {path: 'login', method: RequestMethod.POST},
+        {path: 'logged', method: RequestMethod.GET})
+        .forRoutes(LoginController)
     }
 }
