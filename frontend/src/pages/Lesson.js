@@ -55,7 +55,8 @@ function Lesson ( ) {
             })
 
             if(res.ok){
-                navigate(formationId)
+                navigate(`/formations/${formationId}`, { replace: true });
+
             }
 
         } catch (error) {
