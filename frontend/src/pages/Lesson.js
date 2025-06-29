@@ -8,7 +8,7 @@ function Lesson ( ) {
     const { csrfToken } = useAuth()
 
     useEffect(() => {
-        fetch(`http://localhost:3001/formations/${formationId}/${lessonId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/${formationId}/${lessonId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -26,7 +26,7 @@ function Lesson ( ) {
 
     async function validateLesson(id){
         try{
-            const res = await fetch(`http://localhost:3001/formations/validate/${lessonId}`,{
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/${lessonId}`,{
                 method: 'POST',
                 credentials: "include",
                 headers: {
