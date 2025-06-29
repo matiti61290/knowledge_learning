@@ -42,7 +42,7 @@ function LessonCard({ lesson, formationId, isBought }) {
                 {!isBought ? (
                     <button className="btn btn-info my-1" onClick={() => handleBuy('lesson', lessonId)}>Acheter</button>
                     ) : (
-                    <a className="btn btn-primary my-1" href={`/formations/${formationId}/${lessonId}`}>Commencer la leçon</a>
+                    <Link className="btn btn-primary my-1" to={`/formations/${formationId}/${lessonId}`}>Commencer la leçon</Link>
                 )}
             </div>
         </div>

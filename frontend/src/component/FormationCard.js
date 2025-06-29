@@ -62,13 +62,13 @@ function FormationCard ({ formation, isBought }) {
                     {!isBought ? (
                         <>
                             <button className="btn btn-info my-1" onClick={() => handleBuy('formation', formationId)}>Acheter</button>
-                            <a className="btn btn-light my-1" href={`/formations/${formation.id}`}>Plus de details</a>
+                            <Link className="btn btn-light my-1" to={`/formations/${formation.id}`}>Plus de details</Link>
                         </>
                     ) : (
                         <>
-                            <a className="btn btn-info my-1" href={`/formations/${formation.id}`}>Accéder à la formation</a>
+                            <Link className="btn btn-info my-1" to={`/formations/${formation.id}`}>Accéder à la formation</Link>
                             {certificationOk === true && 
-                                <a className="btn btn-primary my-1" href={`certificate/${formationId}`}>Accéder à votre certificat</a>
+                                <Link className="btn btn-primary my-1" to={`certificate/${formationId}`}>Accéder à votre certificat</Link>
                             }
                         </>
                     )}

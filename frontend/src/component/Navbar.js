@@ -54,10 +54,10 @@ function Navbar() {
             <div ref={menuRef} className={`collapse navbar-collapse ${collapsedMenu ? "show" : ""}`} id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item">
-                        <a className="nav-link" href="/">Accueil</a>
+                        <Link className="nav-link" to="/">Accueil</Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/formations">Nos formations</a>
+                        <Link className="nav-link" to="/formations">Nos formations</Link>
                     </li>
                     <li ref={dropdownRef} className={`nav-item dropdown ${dropdownOpen ? "show" : ""}`}>
                         <a
@@ -78,21 +78,21 @@ function Navbar() {
                             className={`dropdown-menu ${dropdownOpen ? "show" : ""}`}
                             aria-labelledby="navbarDropdown"
                         >
-                            <a className="dropdown-item" href="/category/1">Musique</a>
-                            <a className="dropdown-item" href="/category/2">Informatique</a>
-                            <a className="dropdown-item" href="/category/3">Jardinage</a>
-                            <a className="dropdown-item" href="/category/4">Cuisine</a>
+                            <Link className="dropdown-item" to="/category/1">Musique</Link>
+                            <Link className="dropdown-item" to="/category/2">Informatique</Link>
+                            <Link className="dropdown-item" to="/category/3">Jardinage</Link>
+                            <Link className="dropdown-item" to="/category/4">Cuisine</Link>
                         </div>
                     </li>
                     {isLogged ? (
-                        <a className="nav-link" href="/userProfile">Mon profil</a>
+                        <Link className="nav-link" to="/userProfile">Mon profil</Link>
                     ): (
                         <>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/login">Me connecter</Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/register">M'inscrire</a>
+                                <Link className="nav-link" to="/register">M'inscrire</Link>
                             </li>
                         </>
                     )}
