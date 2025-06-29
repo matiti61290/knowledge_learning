@@ -27,9 +27,9 @@ function FormationCard ({ formation, isBought }) {
         })
     }, [formationId])
 
-    async function handleBuy() {
+    async function handleBuy(type, id) {
         try{
-            const res = await fetch(`${process.env.BREACT_APP_BACKEND_URL}/payment/create-checkout-session/formation/${formationId}`,{
+            const res = await fetch(`${process.env.BREACT_APP_BACKEND_URL}/payment/create-checkout-session/${type}/${id}`,{
                 method: 'POST',
                 credentials: 'include',
                 headers: {

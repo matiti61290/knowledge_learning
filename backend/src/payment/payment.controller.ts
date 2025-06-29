@@ -32,10 +32,11 @@ export class PaymentController {
      * @returns une session de paiement Stripe
      */
     @Post('create-checkout-session/:type/:id')
-    @UseGuards(RolesGuard)
-    @Roles('student', 'admin')
+    // @UseGuards(RolesGuard)
+    // @Roles('student', 'admin')
     async createCheckoutSession(
     @CurrentUser() user, @Param('type') type: string, @Param('id') id: number){
+        console.log('USER:', user);
         if(type === 'formation'){
             return this.paymentService.createCheckoutSessionFormation(id, user, type)
         } else if (type === 'lesson'){
