@@ -107,8 +107,8 @@ export class FormationController {
      * @returns - Retourne une mise à jour de la base de données si la validation est acceptée.
      */
     @Post('/validate/:lessonId')
-    // @UseGuards(RolesGuard)
-    // @Roles('student', 'admin')
+    @UseGuards(RolesGuard)
+    @Roles('student', 'admin')
     async validateLesson(
         @CurrentUser() user,
         @Param('lessonId', ParseIntPipe) lessonId: number
