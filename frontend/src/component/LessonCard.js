@@ -7,7 +7,7 @@ function LessonCard({ lesson, formationId, isBought }) {
 
     async function handleBuy(type, id){
         try{
-            const res = await fetch(`${process.env.BACKEND_URL}/payment/create-checkout-session/lesson/${lessonId}`,{
+            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/payment/create-checkout-session/lesson/${lessonId}`,{
                 method: 'POST',
                 credentials: 'include',
                 headers: {

@@ -9,7 +9,7 @@ function Formation() {
    
 
     useEffect(() => {
-        fetch(`${process.env.BACKEND_URL}/${formationId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/${formationId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -26,7 +26,7 @@ function Formation() {
     }, [formationId])
 
     useEffect(() => {
-        fetch(`${process.env.BACKEND_URL}/${formationId}/lessons`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/${formationId}/lessons`, {
             method: 'GET',
             credentials: 'include'
         })

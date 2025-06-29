@@ -5,7 +5,7 @@ function Formations () {
     const [formations, setFormations] = useState([])
 
     useEffect(() => {
-        fetch(`${process.env.BACKEND_URL}/formations`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/formations`, {
             method: 'GET',
             credentials: 'include'
         })
