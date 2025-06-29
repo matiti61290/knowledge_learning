@@ -5,7 +5,7 @@ function UserProfile() {
     const [certificationOk, setCertificationOk] = useState(true)
 
     useEffect(() => {
-        fetch('http://localhost:3001/user/', {
+        fetch(`${process.env.REACT_APP_API_URL}/user/`, {
             method: 'GET',
             credentials: 'include'
         }).then(response => response.json())
@@ -15,7 +15,7 @@ function UserProfile() {
 
     async function getCertificate(id){
         try{
-            fetch(`http://localhost:3001/formations/certification/${id}`, {
+            fetch(`${process.env.REACT_APP_API_URL}/certification/${id}`, {
                 method: 'GET',
                 credentials: 'include'
             })

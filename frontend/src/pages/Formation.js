@@ -9,7 +9,7 @@ function Formation() {
    
 
     useEffect(() => {
-        fetch(`http://localhost:3001/formations/${formationId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/${formationId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -26,7 +26,7 @@ function Formation() {
     }, [formationId])
 
     useEffect(() => {
-        fetch(`http://localhost:3001/formations/${formationId}/lessons`, {
+        fetch(`${process.env.REACT_APP_API_URL}/${formationId}/lessons`, {
             method: 'GET',
             credentials: 'include'
         })

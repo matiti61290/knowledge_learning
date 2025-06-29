@@ -7,7 +7,7 @@ function FormationCard ({ formation, isBought }) {
     const [ certificationOk, setCertificationOk ] =useState(true)
 
     useEffect(() => {
-        fetch(`http://localhost:3001/formations/certification/${formationId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/formations/certification/${formationId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -28,7 +28,7 @@ function FormationCard ({ formation, isBought }) {
 
     async function handleBuy() {
         try{
-            const res = await fetch(`http://localhost:3001/payment/create-checkout-session/formation/${formationId}`,{
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/payment/create-checkout-session/formation/${formationId}`,{
                 method: 'POST',
                 credentials: 'include',
                 headers: {
