@@ -7,7 +7,7 @@ function Certificate() {
     const {formationId} = useParams()
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/${formationId}`,{
+        fetch(`${process.env.BACKEND_URL}/${formationId}`,{
             method: 'GET',
             credentials: 'include'
         })
@@ -25,7 +25,7 @@ function Certificate() {
     console.log(certificate)
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/user/`, {
+        fetch(`${process.env.BACKEND_URL}/user/`, {
             method: 'GET',
             credentials: 'include'
         }).then(response => response.json())
