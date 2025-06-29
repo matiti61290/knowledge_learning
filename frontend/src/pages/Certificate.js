@@ -28,7 +28,6 @@ function Certificate() {
             console.error("Erreur API:", error)
         })
     }, [formationId])
-    console.log(certificate)
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/user/`, {
@@ -38,9 +37,11 @@ function Certificate() {
         .then(data => setUser(data))
         .catch(error => console.error('Erreur API :', error ))
     }, [])
-    console.log(user)
 
-    console.log(formationId)
+    if (!user || !certificate) {
+        return <div>Chargement du certificat...</div>
+    }
+    
     return(
         <div className="container d-flex flex-column align-items-center mt-5">
             <h1>Certificat de réussite</h1>
