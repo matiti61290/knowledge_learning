@@ -13,7 +13,7 @@ const {
   },
   cookieName: 'x-csrf-token',
   cookieOptions: {
-    sameSite: 'lax',
+    sameSite: 'none',
     path: '/',
     secure: true //in prod only
   },
