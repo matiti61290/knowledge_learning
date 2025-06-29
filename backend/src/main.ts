@@ -40,17 +40,16 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
+import type { RequestHandler } from 'express';
 
 async function bootstrap() {
   dotenv.config();
 
   const server = express();
 
-  // ✅ Stripe webhook: raw body nécessaire
   server.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
 
-  // ✅ Middleware pour résoudre les problèmes CORS précoces (OPTIONS)
-  server.use((req, res, next) => {
+  const corsMiddleware: RequestHandler = (req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'https://knowledge-learning-1-7gl2.onrender.com');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header(
@@ -60,31 +59,30 @@ async function bootstrap() {
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
 
     if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
+      res.sendStatus(200);
+      return;
     }
 
     next();
-  });
+  };
 
-  // ✅ Body parsing standard pour tout le reste
+
+  server.use(corsMiddleware);
+
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: true }));
 
-  // ✅ Cookies
   server.use(cookieParser());
 
-  // ✅ Logger simple
   server.use((req, res, next) => {
     console.log(`Request ${req.method} ${req.url}`);
     next();
   });
 
-  // ✅ Création de l'app Nest
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
-    cors: false, // on configure CORS manuellement
+    cors: false,
   });
 
-  // ✅ CORS depuis Nest (doit venir *avant* app.init())
   app.enableCors({
     origin: 'https://knowledge-learning-1-7gl2.onrender.com',
     credentials: true,
@@ -92,12 +90,12 @@ async function bootstrap() {
 
   await app.init();
 
-  // ✅ Render attend qu'on écoute sur process.env.PORT
   const port = process.env.PORT || 3001;
   server.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
   });
 }
-
 bootstrap();
+
+
 
