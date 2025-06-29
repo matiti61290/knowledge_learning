@@ -7,7 +7,7 @@ function FormationCard ({ formation, isBought }) {
     const [ certificationOk, setCertificationOk ] =useState(true)
 
     useEffect(() => {
-        fetch(`${process.env.BACKEND_URL}/formations/certification/${formationId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/certification/${formationId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -28,7 +28,7 @@ function FormationCard ({ formation, isBought }) {
 
     async function handleBuy() {
         try{
-            const res = await fetch(`${process.env.BACKEND_URL}/payment/create-checkout-session/formation/${formationId}`,{
+            const res = await fetch(`${process.env.BREACT_APP_BACKEND_URL}/payment/create-checkout-session/formation/${formationId}`,{
                 method: 'POST',
                 credentials: 'include',
                 headers: {

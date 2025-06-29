@@ -13,7 +13,7 @@ function Register() {
     
 
         try{
-            const response = await fetch(`${process.env.BACKEND_URL}/register`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/register`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

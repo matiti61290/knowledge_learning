@@ -13,7 +13,7 @@ function Login () {
       e.preventDefault()
     
       try{
-        const response = await fetch(`${process.env.BACKEND_URL}/login`, {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
           method: 'POST',
           credentials: 'include',
           headers: {

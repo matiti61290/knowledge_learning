@@ -8,7 +8,7 @@ function Lesson ( ) {
     const { csrfToken } = useAuth()
 
     useEffect(() => {
-        fetch(`${process.env.BACKEND_URL}/${formationId}/${lessonId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/${formationId}/${lessonId}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -26,7 +26,7 @@ function Lesson ( ) {
 
     async function validateLesson(id){
         try{
-            const res = await fetch(`${process.env.BACKEND_URL}/${lessonId}`,{
+            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/${lessonId}`,{
                 method: 'POST',
                 credentials: "include",
                 headers: {
