@@ -1,10 +1,12 @@
 import React, { useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Certificate() {
     const [certificate, setCertificate] = useState(null)
     const [user, setUser] = useState(null)
     const {formationId} = useParams()
+    const { csrfToken } = useAuth()
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/certification/${formationId}`,{
