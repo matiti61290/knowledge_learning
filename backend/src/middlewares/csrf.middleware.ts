@@ -13,9 +13,11 @@ const {
   },
   cookieName: 'x-csrf-token',
   cookieOptions: {
+    httpOnly: true,
     sameSite: 'none',
     path: '/',
-    secure: true //in prod only
+    secure: true, //in prod only
+    domain: ".knowledge-learning-uqa2.onrender.com"
   },
 });
 
