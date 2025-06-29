@@ -12,7 +12,8 @@ export class AuthMiddleware implements NestMiddleware {
         const token = req.cookies?.access_token;
     
         if (!token) {
-            throw new ForbiddenException('Aucun token fourni');
+           req.user = undefined
+           return next()
         }
     
         try {
