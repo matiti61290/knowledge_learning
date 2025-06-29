@@ -9,7 +9,11 @@ function Certificate() {
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/certification/${formationId}`,{
             method: 'GET',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                    'x-csrf-token' : csrfToken,
+                    'Content-Type': 'application/json'
+                }
         })
         .then(response => {
             if(!response.ok){
