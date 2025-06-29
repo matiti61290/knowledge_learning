@@ -1,4 +1,4 @@
-import { forwardRef, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module, NestModule, Req, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Formation } from 'src/entities/formation.entity';
 import { FormationController } from './formation.controller';
@@ -21,7 +21,13 @@ import { Purchase } from 'src/entities/purchase.entity';
 })
 export class FormationModule implements NestModule{
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthMiddleware).exclude('formations', 'formations/category/:categoryId', 'formations/:formationId', 'formations/:formationId/lessons','formations/:formationId/:lessonId')
+        consumer.apply(AuthMiddleware).exclude(
+            { path: 'formations', method: RequestMethod.ALL },
+            { path: 'formations/category/:categoryId', method: RequestMethod.ALL },
+            { path: 'formations/:formationId', method: RequestMethod.ALL },
+            { path: 'formations/:formationId/lessons', method: RequestMethod.ALL },
+            { path: 'formations/:formationId/:lessonId', method: RequestMethod.ALL },
+        )
         .forRoutes(FormationController)
     }
 }
