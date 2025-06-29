@@ -27,7 +27,7 @@ function App() {
         <Route path="/formations/:formationId/:lessonId" element={<Lesson />} />
         <Route path="/register" element={<Register/>} />
         <Route path="/userProfile" element={<UserProfile/>} />
-        <Route path="/certification/:formationId" element={<Certificate/>} />
+        <Route path="/certification/:formationId" element={<Certificate />} />
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </main>
