@@ -16,7 +16,7 @@ function UserProfile() {
 
     async function getCertificate(id){
         try{
-            fetch(`${process.env.REACT_APP_BACKEND_URL}/certification/${id}`, {
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/certification/${id}`, {
                 method: 'GET',
                 credentials: 'include'
             })
