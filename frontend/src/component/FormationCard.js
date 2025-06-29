@@ -43,7 +43,7 @@ function FormationCard ({ formation, isBought }) {
             }
 
             const data = await res.json()
-
+            console.log(data)
             if(data.url) {
                 window.location.href = data.url
             } else {
