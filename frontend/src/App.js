@@ -28,7 +28,7 @@ function App() {
         <Route path="/register" element={<Register/>} />
         <Route path="/userProfile" element={<UserProfile/>} />
         <Route path="/certificate/:formationId" element={<Certificate/>} />
-        {/* <Route path="/*" element={<PageNotFound />} /> */}
+        <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </main>
     <Footer />

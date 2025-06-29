@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function Navbar() {
     const [collapsedMenu, setCollapsedMenu] = useState(false)
@@ -88,7 +89,7 @@ function Navbar() {
                     ): (
                         <>
                             <li className="nav-item">
-                                <a className="nav-link" href="/login">Me connecter</a>
+                                <Link className="nav-link" to="/login">Me connecter</Link>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="/register">M'inscrire</a>
