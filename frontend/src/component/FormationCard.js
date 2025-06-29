@@ -60,6 +60,7 @@ function FormationCard ({ formation, isBought }) {
                 <h5 className="card-title">{formation.name}</h5>
                 <p className="card-text fw-semibold">{formation.price} €</p>
                 <div className="d-flex flex-column align-items-center">
+                    <button type="submit" className="btn btn-info my-1" onClick={() => handleBuy('formation', formationId)}>Acheter</button>
                     {!isBought ? (
                         <>
                             <button type="submit" className="btn btn-info my-1" onClick={() => handleBuy('formation', formationId)}>Acheter</button>
