@@ -7,6 +7,8 @@ function Lesson ( ) {
     const {formationId, lessonId} = useParams()
     const { csrfToken } = useAuth()
 
+    console.log(lessonId)
+
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/${formationId}/${lessonId}`, {
             method: 'GET',
