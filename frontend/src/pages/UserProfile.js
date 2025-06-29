@@ -126,7 +126,7 @@ function UserProfile() {
               {certificationStatus[purchase.formation.id] === true && (
                 <Link
                   className="btn btn-primary my-1"
-                  to={`/certification/${purchase.formation.id}`}
+                  to={`/formations/certification/${purchase.formation.id}`}
                 >
                   Accéder à votre certificat
                 </Link>
