@@ -15,6 +15,10 @@ async function bootstrap() {
   server.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
 
   server.use(cookieParser());
+  server.use((req, res, next) => {
+  console.log(`Request ${req.method} ${req.url}`);
+  next();
+});
   server.use(cors({
     origin: 'https://knowledge-learning-1-7gl2.onrender.com',
     credentials: true,
