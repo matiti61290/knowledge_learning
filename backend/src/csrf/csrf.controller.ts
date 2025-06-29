@@ -11,7 +11,7 @@ export class CsrfController {
     if(!req.cookies['session-id']){
       const sessionId = randomUUID()
       res.cookie('session-id', sessionId, {
-        sameSite:'strict',
+        sameSite:'none',
         path:'/',
         secure:true,
         httpOnly:false
