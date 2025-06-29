@@ -7,6 +7,8 @@ function Lesson ( ) {
     const {formationId, lessonId} = useParams()
     const { csrfToken } = useAuth()
 
+    console.log(lessonId)
+
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/${formationId}/${lessonId}`, {
             method: 'GET',
@@ -24,9 +26,27 @@ function Lesson ( ) {
         });
     }, [formationId, lessonId])
 
-    async function validateLesson(id){
-        try{
-            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/${lessonId}`,{
+    // async function validateLesson(id){
+    //     try{
+    //         fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`,{
+    //             method: 'POST',
+    //             credentials: "include",
+    //             headers: {
+    //                 'x-csrf-token': csrfToken,
+    //                 'Content-Type' : 'application/json'
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.error('Erreur:', error)
+    //     }
+    // }
+
+    async function validateLesson(id) {
+        console.log("validateLesson → ID envoyé:", id)
+        console.log("URL construite:", `${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`)
+
+        try {
+            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`, {
                 method: 'POST',
                 credentials: "include",
                 headers: {
@@ -34,6 +54,9 @@ function Lesson ( ) {
                     'Content-Type' : 'application/json'
                 }
             })
+
+            const data = await res.json()
+            console.log("Résultat:", data)
         } catch (error) {
             console.error('Erreur:', error)
         }
@@ -53,7 +76,7 @@ function Lesson ( ) {
                     </video>
                 </div>
                 <p>{lesson.content}</p>
-                <button className="btn btn-primary" onClick={()=> validateLesson(lessonId)}>Finir la lecon</button>
+                <button type="button" className="btn btn-primary" onClick={()=> validateLesson(lessonId)}>Finir la lecon</button>
             </div>
         </div>
     )
