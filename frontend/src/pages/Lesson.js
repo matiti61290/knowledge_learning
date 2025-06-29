@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Lesson ( ) {
     const [lesson, setLesson] = useState(null)
     const {formationId, lessonId} = useParams()
     const { csrfToken } = useAuth()
+    const navigate = useNavigate()
 
     console.log(lessonId)
 
@@ -42,8 +43,6 @@ function Lesson ( ) {
     // }
 
     async function validateLesson(id) {
-        console.log("validateLesson → ID envoyé:", id)
-        console.log("URL construite:", `${process.env.REACT_APP_BACKEND_URL}/formations/validate/${String(id)}`)
 
         try {
             const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`, {
@@ -55,8 +54,10 @@ function Lesson ( ) {
                 }
             })
 
-            const data = await res.json()
-            console.log("Résultat:", data)
+            if(res.ok){
+                navigate(`formations/${formationId}`)
+            }
+
         } catch (error) {
             console.error('Erreur:', error)
         }
