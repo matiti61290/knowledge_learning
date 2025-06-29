@@ -26,7 +26,7 @@ function Lesson ( ) {
 
     async function validateLesson(id){
         try{
-            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`,{
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`,{
                 method: 'POST',
                 credentials: "include",
                 headers: {
@@ -53,7 +53,7 @@ function Lesson ( ) {
                     </video>
                 </div>
                 <p>{lesson.content}</p>
-                <button className="btn btn-primary" onClick={()=> validateLesson(lessonId)}>Finir la lecon</button>
+                <button type="button" className="btn btn-primary" onClick={()=> validateLesson(lessonId)}>Finir la lecon</button>
             </div>
         </div>
     )
