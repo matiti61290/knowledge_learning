@@ -43,7 +43,7 @@ function Lesson ( ) {
 
     async function validateLesson(id) {
         console.log("validateLesson → ID envoyé:", id)
-        console.log("URL construite:", `${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`)
+        console.log("URL construite:", `${process.env.REACT_APP_BACKEND_URL}/formations/validate/${String(id)}`)
 
         try {
             const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`, {
