@@ -51,7 +51,7 @@ function UserProfile() {
                 <div >
                     {user.purchases.map((purchase) => (
                         <div className="my-2 d-flex flex-row justify-content-evenly align-items-center border-top border-bottom">
-                        <a className="link-underline link-underline-opacity-0" href={`/formations/${purchase.formation.id}`}>{purchase.formation.name}</a>
+                        <Link className="link-underline link-underline-opacity-0" to={`/formations/${purchase.formation.id}`}>{purchase.formation.name}</Link>
                         {certificationOk === true &&
                             <button className="btn btn-primary my-1" onClick={() => getCertificate(purchase.formation.id)}>Accéder à votre certificat</button>
                         }
