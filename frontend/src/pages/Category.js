@@ -7,7 +7,7 @@ function Category() {
     const [formationsByCategory, setFormationsByCategory] = useState([]);
 
     useEffect(() => {
-        fetch(`http://localhost:3001/formations/category/${categoryId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/${categoryId}`, {
             method: 'GET',
             credentials: 'include'
         })
