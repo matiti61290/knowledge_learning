@@ -48,7 +48,9 @@ export class PaymentController {
           if (!session.url) {
             throw new InternalServerErrorException('Session créée mais URL absente');
         }
-        return { url: session.url}
+
+        const urlSession = session.url
+        return urlSession
     }
 
     /**

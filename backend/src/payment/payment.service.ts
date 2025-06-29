@@ -89,7 +89,7 @@ export class PaymentService {
 
             return session
         } catch (error) {
-            throw new InternalServerErrorException(' Failed to create checkout session')
+            throw new InternalServerErrorException('Failed to create checkout session')
         }
     }
 
