@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function LessonCard({ lesson, formationId, isBought }) {
     const lessonId = lesson.id
