@@ -18,8 +18,8 @@ function Category() {
                 return response.json();
             })
             .then(data => {
-                console.log("Réponse API formations:", data)
-                setFormationsByCategory(data);
+                 const formationsArray = Array.isArray(data) ? data : Object.values(data)
+                setFormationsByCategory(formationsArray);
             })
             .catch(error => console.error("Erreur API :", error));
     }, [categoryId]); 
