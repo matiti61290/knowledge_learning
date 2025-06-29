@@ -7,7 +7,7 @@ function Certificate() {
     const {formationId} = useParams()
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/${formationId}`,{
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/certification/${formationId}`,{
             method: 'GET',
             credentials: 'include'
         })
