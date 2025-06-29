@@ -69,7 +69,7 @@ function FormationCard ({ formation, isBought }) {
                         <>
                             <Link className="btn btn-info my-1" to={`/formations/${formation.id}`}>Accéder à la formation</Link>
                             {certificationOk === true && 
-                                <Link className="btn btn-primary my-1" to={`/formations/certification/${formationId}`}>Accéder à votre certificat</Link>
+                                <Link className="btn btn-primary my-1" to={`/certification/${formationId}`}>Accéder à votre certificat</Link>
                             }
                         </>
                     )}
