@@ -18,6 +18,7 @@ function Category() {
                 return response.json();
             })
             .then(data => {
+                console.log("Réponse API formations:", data)
                 setFormationsByCategory(data);
             })
             .catch(error => console.error("Erreur API :", error));
