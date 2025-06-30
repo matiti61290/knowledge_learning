@@ -265,7 +265,7 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
         // } catch (error){
         //     console.warn("Erreur dans validateCertification:", error.message)
         // }
-        
+        return { message: 'Leçon validée avec succès' };
     }
 
     /**
