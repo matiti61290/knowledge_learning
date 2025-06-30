@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Formation } from '../entities/formation.entity';
 import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
@@ -209,76 +209,66 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
      * @param user - information de l'utilisateur qui a achete la formation
      * @param lessonId - Id de la lecon pour la retrouver en base de donnee
      */
-    async validateLesson( user: any, lessonId: number) {
+async validateLesson(user: any, lessonId: number) {
+    const userId = user.id;
 
-        const userId = user.id
-
-        if(!userId){
-            throw new NotFoundException('User not found')
-        }
-
-        const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}, relations:['formation']})
-
-        if(!lessonInProgress) {
-            throw new NotFoundException('Lesson in progress not found')
-        }
-
-        const lessonIsCompleted = lessonInProgress.is_completed
-
-        if (lessonIsCompleted === true) {
-            throw new InternalServerErrorException('You already completed this lesson')
-        }
-
-        lessonInProgress.is_completed = true
-        await this.userProgressRepository.save(lessonInProgress)
-
-        // check if certification can be delivered
-            // Find lessons in progress for the formation
-            console.log("On rentre dans la partie qui bloque")
-        const formationId = lessonInProgress.formation.id;
-        console.log("La formation a pour id:", formationId)
-        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({
-            where: {
-                formation: { id: formationId },
-                user: { id: userId }
-            }
-        });
-
-        console.log("La lecon en cours est:", lessonInProgress)
-
-        // Leçons existantes dans la formation
-        const lessonsInFormation: Lesson[] = await this.lessonRepository.find({
-            where: { formation: { id: formationId } },
-            relations: ['formation']
-        });
-
-        console.log("Les lecons liees a cette formation sont:", lessonsInFormation)
-
-        const numberLessonsInFormation = lessonsInFormation.length;
-        const numberLessonsInProgressInFormation = lessonsInProgress.length;
-
-        console.log("nombre lecon dans la formation:", numberLessonsInFormation)
-        console.log("nombre lecon dans la formation:", numberLessonsInProgressInFormation)
-
-        // Vérification que l'utilisateur a acheté chaque leçon
-        if (numberLessonsInFormation !== numberLessonsInProgressInFormation) {
-            throw new InternalServerErrorException('You didn\'t buy each lessons of the formation');
-        }
-
-        // Vérifie que toutes les leçons sont complétées
-        for (const lessonInProgress of lessonsInProgress) {
-            if (!lessonInProgress.is_completed) {
-                throw new InternalServerErrorException('One of the lessons isn\'t completed');
-            }
-        }
-        //call the method to validate the certification
-        // try{
-        //     await this.validateCertification(formationId, user)
-        // } catch (error){
-        //     console.warn("Erreur dans validateCertification:", error.message)
-        // }
-        return { message: 'Leçon validée avec succès' };
+    if (!userId) {
+        throw new NotFoundException('User not found');
     }
+
+    const lessonInProgress = await this.userProgressRepository.findOne({
+        where: { user: { id: userId }, lesson: { id: lessonId } },
+        relations: ['formation']
+    });
+
+    if (!lessonInProgress) {
+        throw new NotFoundException('Lesson in progress not found');
+    }
+
+    if (lessonInProgress.is_completed) {
+        throw new BadRequestException('You already completed this lesson');
+    }
+
+    // Valider la leçon
+    lessonInProgress.is_completed = true;
+    await this.userProgressRepository.save(lessonInProgress);
+
+    // Récupérer formation et leçons de l'utilisateur
+    const formationId = lessonInProgress.formation.id;
+
+    const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({
+        where: {
+            formation: { id: formationId },
+            user: { id: userId }
+        }
+    });
+
+    const lessonsInFormation: Lesson[] = await this.lessonRepository.find({
+        where: { formation: { id: formationId } },
+        relations: ['formation']
+    });
+
+    // Vérification que l'utilisateur a bien acheté toutes les leçons
+    if (lessonsInFormation.length !== lessonsInProgress.length) {
+        throw new BadRequestException("You didn't buy all lessons of the formation");
+    }
+
+    // Vérifie si toutes les leçons sont complétées
+    const allCompleted = lessonsInProgress.every(l => l.is_completed);
+
+    if (allCompleted) {
+        // Si oui, tenter de valider la certification (sans bloquer si erreur)
+        try {
+            await this.validateCertification(formationId, user);
+        } catch (error) {
+            console.warn("Erreur dans validateCertification:", error.message);
+        }
+    } else {
+        console.log('Toutes les leçons ne sont pas encore terminées, certification non validée.');
+    }
+
+    return { message: 'Leçon validée avec succès' };
+}
 
     /**
      * Méthode pour valider la certification si toutes les leçons ont été complétées
