@@ -45,7 +45,7 @@ function Lesson ( ) {
     async function validateLesson(id) {
 
         try {
-            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`, {
+            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${String(id)}`, {
                 method: 'POST',
                 credentials: "include",
                 headers: {
