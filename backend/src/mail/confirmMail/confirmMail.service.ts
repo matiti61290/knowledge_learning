@@ -20,7 +20,7 @@ export class ConfirmMailService {
      * @param token token pour vérifier si l'utilisateur est bien inscrit
      */
     async sendVerificationMail(mail: string, token: string) {
-        const link = `http://localhost:3000/register/validation?token=${token}`
+        const link = `https://knowledge-learning-uqa2.onrender.com/register/validation?token=${token}`
         await this.transporter.sendMail({
             from: 'formationdev61@gmail.com',
             to: mail,
