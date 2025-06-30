@@ -113,6 +113,7 @@ export class FormationController {
         @CurrentUser() user,
         @Param('lessonId', ParseIntPipe) lessonId: number
     ) {
-        return this.formationService.validateLesson(user, lessonId)
+        await this.formationService.validateLesson(user, lessonId)
+        return { message: 'Leçon validée avec succès' }
     }
 }
