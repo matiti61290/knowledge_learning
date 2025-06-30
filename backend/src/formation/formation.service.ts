@@ -250,15 +250,15 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
         const numberLessonsInProgressInFormation = lessonsInProgress.length
 
         //Check if user bought each lesson of a formation, and if each lesson is completed
-        for (const lessonInProgress of lessonsInProgress){
-            if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
-                throw new InternalServerErrorException('You didn\'t buy each lessons of the formation')
-            }
-            const isCompleted = lessonInProgress.is_completed
-            if(isCompleted === false){
-                throw new InternalServerErrorException('One of the lessons isn\'t completed')
-            }
-        }
+        // for (const lessonInProgress of lessonsInProgress){
+        //     if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
+        //         throw new InternalServerErrorException('You didn\'t buy each lessons of the formation')
+        //     }
+        //     const isCompleted = lessonInProgress.is_completed
+        //     if(isCompleted === false){
+        //         throw new InternalServerErrorException('One of the lessons isn\'t completed')
+        //     }
+        // }
         //call the method to validate the certification
         // try{
         //     await this.validateCertification(formationId, user)
