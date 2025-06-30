@@ -255,7 +255,12 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
             }
         }
         //call the method to validate the certification
-        await this.validateCertification(formationId, user)
+        try{
+            await this.validateCertification(formationId, user)
+        } catch (error){
+            console.warn("Erreur dans validateCertification:", error.message)
+        }
+        
     }
 
     /**
