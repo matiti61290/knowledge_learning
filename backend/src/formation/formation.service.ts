@@ -213,17 +213,21 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
 
         const userId = user.id
 
+        console.log("l'id de la formation est:", lessonId)
+        console.log("user id est:", userId)
         if(!userId){
             throw new NotFoundException('User not found')
         }
 
         const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}, relations:['formation']})
+        console.log("La lecon en cours est ", lessonInProgress)
 
         if(!lessonInProgress) {
             throw new NotFoundException('Lesson in progress not found')
         }
 
         const lessonIsCompleted = lessonInProgress.is_completed
+        console.log("La completion de la lecon:", lessonIsCompleted)
 
         if (lessonIsCompleted === true) {
             throw new InternalServerErrorException('You already completed this lesson')
@@ -231,6 +235,7 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
 
         lessonInProgress.is_completed = true
         await this.userProgressRepository.save(lessonInProgress)
+        console.log("La progression est sauvegardee")
 
         // check if certification can be delivered
             // Find lessons in progress for the formation
