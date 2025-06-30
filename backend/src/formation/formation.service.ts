@@ -255,7 +255,7 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
             }
         }
         //call the method to validate the certification
-        this.validateCertification(formationId, user)
+        await this.validateCertification(formationId, user)
     }
 
     /**
@@ -267,7 +267,8 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
         const formationCertification = await this.userCertification.findOne({where:{formation: {id:formationId}, user:{ id: user.id}}})
         
         if(!formationCertification){
-            throw new NotFoundException("Il n'y a pas de certificat de validation pour cette formation")
+            console.warn(`Aucun certificat trouvé pour user ${user.id} et formation ${formationId}`)
+            return
         }
 
         formationCertification.is_completed = true
