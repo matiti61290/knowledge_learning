@@ -239,26 +239,35 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
 
         // check if certification can be delivered
             // Find lessons in progress for the formation
-        const formationId = lessonInProgress.formation.id
-        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({where:{ formation:{id: formationId}}})
+        const formationId = lessonInProgress.formation.id;
 
-            // Find lessons of the formation
-        const lessonsInFormation: Lesson[] = await this.lessonRepository.find({where:{formation:{id:formationId}}, relations:['formation']})
+        const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({
+            where: {
+                formation: { id: formationId },
+                user: { id: userId } // ✅ Important
+            }
+        });
 
-        const numberLessonsInFormation = lessonsInFormation.length
+        // Leçons existantes dans la formation
+        const lessonsInFormation: Lesson[] = await this.lessonRepository.find({
+            where: { formation: { id: formationId } },
+            relations: ['formation']
+        });
 
-        const numberLessonsInProgressInFormation = lessonsInProgress.length
+        const numberLessonsInFormation = lessonsInFormation.length;
+        const numberLessonsInProgressInFormation = lessonsInProgress.length;
 
-        //Check if user bought each lesson of a formation, and if each lesson is completed
-        // for (const lessonInProgress of lessonsInProgress){
-        //     if(numberLessonsInFormation !== numberLessonsInProgressInFormation){
-        //         throw new InternalServerErrorException('You didn\'t buy each lessons of the formation')
-        //     }
-        //     const isCompleted = lessonInProgress.is_completed
-        //     if(isCompleted === false){
-        //         throw new InternalServerErrorException('One of the lessons isn\'t completed')
-        //     }
-        // }
+        // Vérification que l'utilisateur a acheté chaque leçon
+        if (numberLessonsInFormation !== numberLessonsInProgressInFormation) {
+            throw new InternalServerErrorException('You didn\'t buy each lessons of the formation');
+        }
+
+        // Vérifie que toutes les leçons sont complétées
+        for (const lessonInProgress of lessonsInProgress) {
+            if (!lessonInProgress.is_completed) {
+                throw new InternalServerErrorException('One of the lessons isn\'t completed');
+            }
+        }
         //call the method to validate the certification
         // try{
         //     await this.validateCertification(formationId, user)
