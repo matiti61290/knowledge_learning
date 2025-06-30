@@ -43,6 +43,7 @@ function Lesson ( ) {
     // }
 
     async function validateLesson(id) {
+        console.log("validateLesson called with ID:", id, "type:", typeof id);
 
         try {
             const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/validate/${id}`, {
