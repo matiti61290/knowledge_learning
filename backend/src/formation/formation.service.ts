@@ -213,21 +213,17 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
 
         const userId = user.id
 
-        console.log("l'id de la formation est:", lessonId)
-        console.log("user id est:", userId)
         if(!userId){
             throw new NotFoundException('User not found')
         }
 
         const lessonInProgress = await this.userProgressRepository.findOne({where: {user: {id: userId}, lesson:{id: lessonId}}, relations:['formation']})
-        console.log("La lecon en cours est ", lessonInProgress)
 
         if(!lessonInProgress) {
             throw new NotFoundException('Lesson in progress not found')
         }
 
         const lessonIsCompleted = lessonInProgress.is_completed
-        console.log("La completion de la lecon:", lessonIsCompleted)
 
         if (lessonIsCompleted === true) {
             throw new InternalServerErrorException('You already completed this lesson')
@@ -235,18 +231,20 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
 
         lessonInProgress.is_completed = true
         await this.userProgressRepository.save(lessonInProgress)
-        console.log("La progression est sauvegardee")
 
         // check if certification can be delivered
             // Find lessons in progress for the formation
+            console.log("On rentre dans la partie qui bloque")
         const formationId = lessonInProgress.formation.id;
-
+        console.log("La formation a pour id:", formationId)
         const lessonsInProgress: UserProgress[] = await this.userProgressRepository.find({
             where: {
                 formation: { id: formationId },
-                user: { id: userId } // ✅ Important
+                user: { id: userId }
             }
         });
+
+        console.log("La lecon en cours est:", lessonInProgress)
 
         // Leçons existantes dans la formation
         const lessonsInFormation: Lesson[] = await this.lessonRepository.find({
@@ -254,8 +252,13 @@ async findLessonsByFormation(formationId: number, user: any): Promise<any[]> {
             relations: ['formation']
         });
 
+        console.log("Les lecons liees a cette formation sont:", lessonsInFormation)
+
         const numberLessonsInFormation = lessonsInFormation.length;
         const numberLessonsInProgressInFormation = lessonsInProgress.length;
+
+        console.log("nombre lecon dans la formation:", numberLessonsInFormation)
+        console.log("nombre lecon dans la formation:", numberLessonsInProgressInFormation)
 
         // Vérification que l'utilisateur a acheté chaque leçon
         if (numberLessonsInFormation !== numberLessonsInProgressInFormation) {
