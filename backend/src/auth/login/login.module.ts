@@ -28,7 +28,8 @@ export class LoginModule {
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(AuthMiddleware).exclude(
         {path: 'login', method: RequestMethod.POST},
-        {path: 'logged', method: RequestMethod.GET})
+        {path: 'logged', method: RequestMethod.GET},
+        {path: 'logout', method: RequestMethod.GET})
         .forRoutes(LoginController)
     }
 }
