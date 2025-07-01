@@ -29,7 +29,7 @@ export class LoginModule {
         consumer.apply(AuthMiddleware).exclude(
         {path: 'login', method: RequestMethod.POST},
         {path: 'logged', method: RequestMethod.GET},
-        {path: 'logout', method: RequestMethod.GET})
+        {path: 'logout', method: RequestMethod.POST})
         .forRoutes(LoginController)
     }
 }
