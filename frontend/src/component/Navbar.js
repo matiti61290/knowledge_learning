@@ -55,7 +55,7 @@ function Navbar() {
             })
 
             if(res.ok){
-                navigate('/')
+                navigate(0)
             } else {
                 console.error('Erreur lors de la déconnexion')
             }
