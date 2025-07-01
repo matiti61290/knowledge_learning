@@ -106,8 +106,12 @@ function Navbar() {
                     </li>
                     {isLogged ? (
                         <>
-                            <Link className="nav-link" to="/userProfile">Mon profil</Link>
-                            <a href="#" className="text-decoration-none" onClick={(e)=> handleLogout(e)}>Se deconnecter</a>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/userProfile">Mon profil</Link>
+                            </li>
+                            <li>
+                                <a href="#" className="nav-link text-decoration-none" onClick={(e)=> handleLogout(e)}>Se deconnecter</a>
+                            </li>
                         </>
                     ): (
                         <>

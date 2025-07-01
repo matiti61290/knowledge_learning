@@ -53,5 +53,7 @@ export class LoginController {
             sameSite: 'none',
             secure: true
         })
+        
+        return {};
     }
 }
