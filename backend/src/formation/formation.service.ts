@@ -311,7 +311,6 @@ async validateLesson(user: any, lessonId: number) {
         if(!currentUser){
             throw new NotFoundException('User not found')
         }
-        console.log('la formation certifie est: ',formationCertified)
         return formationCertified
     }
 }
