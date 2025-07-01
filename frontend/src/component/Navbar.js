@@ -46,8 +46,7 @@ function Navbar() {
         };
     }, []);
 
-    async function handleLogout (e) {
-        e.preventDefault()
+    async function handleLogout () {
 
         try{
             const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login/logout`, {
@@ -110,7 +109,7 @@ function Navbar() {
                                 <Link className="nav-link" to="/userProfile">Mon profil</Link>
                             </li>
                             <li>
-                                <a href="#" className="nav-link text-decoration-none" onClick={(e)=> handleLogout(e)}>Se deconnecter</a>
+                                <a href="#" className="nav-link text-decoration-none" onClick={()=> handleLogout()}>Se deconnecter</a>
                             </li>
                         </>
                     ): (
