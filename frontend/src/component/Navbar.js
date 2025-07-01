@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
     const [collapsedMenu, setCollapsedMenu] = useState(false)
@@ -8,6 +8,7 @@ function Navbar() {
     const menuRef = useRef(null)
     const dropdownRef = useRef(null); 
     const { isLogged } = useAuth()
+    const navigate = useNavigate()
 
     const toggleMenu = () => {
         setCollapsedMenu(prev => !prev)
@@ -44,6 +45,25 @@ function Navbar() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    async function handleLogout (e) {
+        e.preventDefault()
+
+        try{
+            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            })
+
+            if(res.ok){
+                navigate('/')
+            } else {
+                console.error('Erreur lors de la déconnexion')
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error)
+        }
+    }
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -85,7 +105,10 @@ function Navbar() {
                         </div>
                     </li>
                     {isLogged ? (
-                        <Link className="nav-link" to="/userProfile">Mon profil</Link>
+                        <>
+                            <Link className="nav-link" to="/userProfile">Mon profil</Link>
+                            <a href="#" className="text-decoration-none" onClick={(e)=> handleLogout(e)}>Se deconnecter</a>
+                        </>
                     ): (
                         <>
                             <li className="nav-item">

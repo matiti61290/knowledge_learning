@@ -45,4 +45,13 @@ export class LoginController {
 
         return {}
     }
+
+    @Post('logout')
+    logoutUser(@Res({passthrough: true}) res: Response) {
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true
+        })
+    }
 }
