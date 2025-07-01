@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Register() {
     const [firstname, setFirstname] = useState('')
@@ -59,7 +60,11 @@ function Register() {
                     <label>Confirmer le mot de passe</label>
                     <input style={{width: 20 + 'em'}} type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
                 </div>
-                <button className="btn btn-secondary" type="submit">S'inscrire</button>
+                <div className="d-flex flex-row justify-content-between">
+                    <button className="btn btn-primary" type="submit">S'inscrire</button>
+                    <Link to={'/login'} className="btn btn-secondary">Déjà inscrit?</Link>
+                </div>
+                
                 <p className="mt-3">{message}</p>
             </form>
         </div>
