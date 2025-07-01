@@ -1,11 +1,12 @@
 import React, { useState, useEffect} from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function FormationCard ({ formation, isBought }) {
     const formationId = formation.id
     const { csrfToken } = useAuth()
     const [ certificationOk, setCertificationOk ] =useState(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/formations/certification/${formationId}`, {
@@ -37,6 +38,10 @@ function FormationCard ({ formation, isBought }) {
                     'Content-Type': 'application/json'
                 }
             })
+
+            if(res.status === 401 || res.status === 403) {
+                navigate('/login')
+            }
 
             if(!res.ok){
                 throw new Error('Errur lors de la creation de la session');

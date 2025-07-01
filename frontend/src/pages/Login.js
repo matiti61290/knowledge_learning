@@ -1,5 +1,5 @@
 import React, {useState} from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 
 function Login () {
@@ -49,7 +49,11 @@ function Login () {
             <label>Mot de passe: </label>
             <input style={{width: 20 + 'em'}} type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-          <button className="btn btn-secondary" type="submit">Se connecter</button>
+          <div className="d-flex flex-row justify-content-between">
+            <button className="btn btn-primary" type="submit">Se connecter</button>
+            <Link to={'/register'} className="btn btn-secondary">Pas encore inscrit?</Link>
+          </div>
+          
           <p className="mt-3">{message}</p>
       </form>
       </div>
