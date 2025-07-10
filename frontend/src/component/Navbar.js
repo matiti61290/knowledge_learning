@@ -91,7 +91,7 @@ function Navbar() {
                                 toggleDropdown();
                             }}
                         >
-                            Categories
+                            Catégories
                         </a>
                         <div
                             className={`dropdown-menu ${dropdownOpen ? "show" : ""}`}
@@ -109,7 +109,7 @@ function Navbar() {
                                 <Link className="nav-link" to="/userProfile">Mon profil</Link>
                             </li>
                             <li>
-                                <a href="#" className="nav-link text-decoration-none" onClick={()=> handleLogout()}>Se deconnecter</a>
+                                <a href="#" className="nav-link text-decoration-none" onClick={()=> handleLogout()}>Se déconnecter</a>
                             </li>
                         </>
                     ): (

@@ -47,7 +47,7 @@ function Certificate() {
             <h1>Certificat de réussite</h1>
             <p>Ce certificat atteste que</p>
             <p>{user.firstname} {user.lastname}</p>
-            <p>a complété la formation. {certificate.formation.name}</p> 
+            <p>a complété la formation {certificate.formation.name}</p> 
         </div>
     )
 }

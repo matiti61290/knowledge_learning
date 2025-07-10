@@ -79,7 +79,7 @@ function Lesson ( ) {
                     </video>
                 </div>
                 <p>{lesson.content}</p>
-                <button type="button" className="btn btn-primary" onClick={()=> validateLesson(lesson.id)}>Finir la lecon</button>
+                <button type="button" className="btn btn-primary" onClick={()=> validateLesson(lesson.id)}>Finir la leçon</button>
             </div>
         </div>
     )

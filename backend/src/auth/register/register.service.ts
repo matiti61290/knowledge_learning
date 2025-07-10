@@ -45,7 +45,7 @@ export class RegisterService {
         const existingUser = await this.userRepository.findOne({ where: {mail: createUserDto.mail} })
 
         if (existingUser){
-            throw new ConflictException('Cet email est deja utilise.')
+            throw new ConflictException('Cet email est deja utilisé.')
         }
 
         const roles = await this.roleRepository.find({ where: { name: 'student'} })
