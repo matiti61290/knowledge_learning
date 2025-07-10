@@ -24,6 +24,9 @@ function Category() {
     }, [categoryId]); 
     console.log("les formations sont: ", formationsByCategory)
 
+    if(!formationsByCategory){
+        return <div>Chargement...</div>;
+    }
     return (
         <div className="container mt-5">
             <h2>Nos formations</h2>

@@ -138,7 +138,7 @@ function UserProfile() {
                   className="btn btn-secondary my-1"
                   onClick={() => getCertificate(purchase.formation.id)}
                 >
-                  Vérifier certificat
+                  Vérifier le certificat
                 </button>
               )}
             </div>

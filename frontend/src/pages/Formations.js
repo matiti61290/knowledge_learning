@@ -14,7 +14,9 @@ function Formations () {
         .catch(error => console.error('Erreur API :', error))
     }, [])
 
-    console.log(formations)
+    if(!formations){
+        return <div>Chargement...</div>;
+    }
     
     return (
         <div className="container mt-5">
